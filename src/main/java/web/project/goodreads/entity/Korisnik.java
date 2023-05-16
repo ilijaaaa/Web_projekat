@@ -129,8 +129,18 @@ public class Korisnik {
                 ", profilnaSlika='" + profilnaSlika + '\'' +
                 ", opis='" + opis + '\'' +
                 ", uloga=" + uloga +
-
                 '}';
+    }
+
+    public Korisnik(){}
+
+    public Korisnik(String ime, String prezime, String korisnickoIme, String mejl, String lozinka) {
+        this.ime = ime;
+        this.prezime = prezime;
+        this.korisnickoIme = korisnickoIme;
+        this.mejl = mejl;
+        this.lozinka = lozinka;
+        this.uloga = Korisnik.Uloga.CITALAC;
     }
 
     public enum Uloga {
