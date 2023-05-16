@@ -16,8 +16,8 @@ public class Knjiga {
     private LocalDate datum;
     @Column
     private BigDecimal ocena;
-    @Column
-    private int brstr;
+    @Column(name="br_str")
+    private int brStr;
     @ManyToOne
     private Zanr zanr;
     @ManyToOne
@@ -79,12 +79,12 @@ public class Knjiga {
         this.ocena = ocena;
     }
 
-    public int getBrstr() {
-        return brstr;
+    public int getBrStr() {
+        return brStr;
     }
 
-    public void setBrstr(int brstr) {
-        this.brstr = brstr;
+    public void setBrStr(int brStr) {
+        this.brStr = brStr;
     }
 
     public Zanr getZanr() {
@@ -105,7 +105,7 @@ public class Knjiga {
                 ", isbn='" + isbn + '\'' +
                 ", datum=" + datum +
                 ", ocena=" + ocena +
-                ", brstr=" + brstr +
+                ", brStr=" + brStr +
                 ", zanr=" + zanr +
                 '}';
     }

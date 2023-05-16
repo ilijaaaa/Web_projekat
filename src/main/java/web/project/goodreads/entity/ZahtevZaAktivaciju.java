@@ -15,6 +15,8 @@ public class ZahtevZaAktivaciju {
     @Column
     @Enumerated(EnumType.STRING)
     private RequestStatus status;
+    @OneToOne
+    private Autor autor;
 
     @Override
     public String toString() {
@@ -23,8 +25,9 @@ public class ZahtevZaAktivaciju {
                 ", mejl='" + mejl + '\'' +
                 ", telefon='" + telefon + '\'' +
                 ", poruka='" + poruka + '\'' +
-                ", datum='" + datum + '\'' +
-                ", status='" + status + '\'' +
+                ", datum=" + datum +
+                ", status=" + status +
+                ", autor=" + autor +
                 '}';
     }
 

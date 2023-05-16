@@ -8,12 +8,14 @@ public class Polica {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
+    @Column
     private String naziv;
     @Column
     private boolean primarno;
     @OneToMany(mappedBy = "polica", fetch = FetchType.EAGER)
     private Set<StavkaPolice> stavke = new HashSet<>();
+    @ManyToOne
+    private Korisnik korisnik;
 
     public Long getId() {
         return id;
@@ -47,6 +49,14 @@ public class Polica {
         this.stavke = stavke;
     }
 
+    public Korisnik getKorisnik() {
+        return korisnik;
+    }
+
+    public void setKorisnik(Korisnik korisnik) {
+        this.korisnik = korisnik;
+    }
+
     @Override
     public String toString() {
         return "Polica{" +
@@ -54,6 +64,7 @@ public class Polica {
                 ", naziv='" + naziv + '\'' +
                 ", primarno=" + primarno +
                 ", stavke=" + stavke +
+                ", korisnik=" + korisnik +
                 '}';
     }
 }

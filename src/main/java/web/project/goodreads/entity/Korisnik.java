@@ -1,6 +1,8 @@
 package web.project.goodreads.entity;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -25,6 +27,8 @@ public class Korisnik {
     @Column
     @Enumerated(EnumType.STRING)
     protected Uloga uloga;
+    @OneToMany(mappedBy = "korisnik", fetch = FetchType.EAGER)
+    protected Set<Polica> police = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -104,6 +108,14 @@ public class Korisnik {
         this.uloga = uloga;
     }
 
+    public Set<Polica> getPolice() {
+        return police;
+    }
+
+    public void setPolice(Set<Polica> police) {
+        this.police = police;
+    }
+
     @Override
     public String toString() {
         return "Korisnik{" +
@@ -117,6 +129,7 @@ public class Korisnik {
                 ", profilnaSlika='" + profilnaSlika + '\'' +
                 ", opis='" + opis + '\'' +
                 ", uloga=" + uloga +
+
                 '}';
     }
 
