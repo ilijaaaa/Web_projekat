@@ -2,31 +2,31 @@ package web.project.goodreads.dto;
 
 public class LoginDto {
 
-    private String username;
+    private String mejl;
 
-    private String password;
+    private String lozinka;
 
     public LoginDto() {
     }
 
-    public LoginDto(String username, String password) {
-        this.username = username;
-        this.password = password;
+    public LoginDto(String mejl, String lozinka) {
+        this.mejl = mejl;
+        this.lozinka = lozinka;
     }
 
-    public String getUsername() {
-        return username;
+    public String getMejl() {
+        return mejl;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setMejl(String mejl) {
+        this.mejl = mejl;
     }
 
-    public String getPassword() {
-        return password;
+    public String getLozinka() {
+        return lozinka;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setLozinka(String lozinka) {
+        this.lozinka = lozinka;
     }
 }

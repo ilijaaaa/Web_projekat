@@ -14,8 +14,16 @@ public class Polica {
     private boolean primarno;
     @OneToMany(mappedBy = "polica", fetch = FetchType.EAGER)
     private Set<StavkaPolice> stavke = new HashSet<>();
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Korisnik korisnik;
+
+    public Polica() {}
+
+    public Polica(String naziv, boolean primarno, Korisnik korisnik) {
+        this.naziv = naziv;
+        this.primarno = primarno;
+        this.korisnik = korisnik;
+    }
 
     public Long getId() {
         return id;

@@ -8,36 +8,66 @@ import web.project.goodreads.dto.*;
 import web.project.goodreads.entity.*;
 import web.project.goodreads.service.*;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api")
 public class KorisnikRestController {
     @Autowired
     private KorisnikService korisnikService;
+    @Autowired
+    private PolicaService policaService;
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto, HttpSession session){
-        if(loginDto.getUsername().isEmpty() || loginDto.getPassword().isEmpty())
-            return new ResponseEntity("Invalid login data", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<Set<Polica>> login(@RequestBody LoginDto loginDto, HttpSession session){
+        if(loginDto.getMejl().isEmpty() || loginDto.getLozinka().isEmpty())
+            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
 
-        Korisnik korisnik = korisnikService.login(loginDto.getUsername(), loginDto.getPassword());
+        Korisnik korisnik = korisnikService.login(loginDto.getMejl(), loginDto.getLozinka());
 
         if (korisnik == null)
-            return new ResponseEntity<>("User does not exist!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
 
         session.setAttribute("korisnik", korisnik);
-        return ResponseEntity.ok("Successfully logged in!");
+
+        Set<Polica> police = new HashSet<>();
+
+        for (Polica p : policaService.findAll())
+            if(p.getKorisnik().getId() == korisnik.getId())
+                police.add(p);
+
+        return ResponseEntity.ok(police);
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> login(@RequestBody SignInDto signInDto, HttpSession session){
+    public ResponseEntity<Korisnik> signin(@RequestBody SignInDto signInDto, HttpSession session){
         if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
-                || signInDto.getLozinka().isEmpty())
-            return new ResponseEntity("Invalid sign in data", HttpStatus.BAD_REQUEST);
+                || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
+            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
+
+        if (!signInDto.getLozinka().equals(signInDto.getPonovljenaLozinka()))
+            return new ResponseEntity("Lozinke nisu iste", HttpStatus.BAD_REQUEST);
+
+        List<Korisnik> korisnici = korisnikService.findAll();
+
+        for (Korisnik k : korisnici)
+            if(signInDto.getMejl().equals(k.getMejl()))
+                return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
 
         Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
 
+        Polica p1 = new Polica("Want to read", true, korisnik);
+        Polica p2 = new Polica("Currently reading", true, korisnik);
+        Polica p3 = new Polica("Read", true, korisnik);
+
+        policaService.save(p1);
+        policaService.save(p2);
+        policaService.save(p3);
+
         this.korisnikService.save(korisnik);
-        return ResponseEntity.ok("Successfully signed in!");
+        return ResponseEntity.ok(korisnik);
     }
 
     @PostMapping("/logout")
@@ -45,9 +75,12 @@ public class KorisnikRestController {
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if (korisnik == null)
-            return new ResponseEntity("Forbidden", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
 
         session.invalidate();
-        return new ResponseEntity("Successfully logged out", HttpStatus.OK);
+        return new ResponseEntity("Uspesno odjavljivanje", HttpStatus.OK);
     }
+
+
+
 }

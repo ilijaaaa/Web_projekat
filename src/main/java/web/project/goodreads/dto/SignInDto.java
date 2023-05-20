@@ -5,7 +5,7 @@ import web.project.goodreads.entity.Korisnik;
 import java.time.LocalDate;
 
 public class SignInDto {
-    private String ime, prezime, korisnickoIme, mejl, lozinka, profilnaSlika, opis;
+    private String ime, prezime, korisnickoIme, mejl, lozinka, profilnaSlika, opis, ponovljenaLozinka;
     private LocalDate datumRodjenja;
     protected Korisnik.Uloga uloga;
 
@@ -48,6 +48,8 @@ public class SignInDto {
         return uloga;
     }
 
+    public String getPonovljenaLozinka() { return ponovljenaLozinka; }
+
     public void setIme(String ime) {
         this.ime = ime;
     }
@@ -83,4 +85,6 @@ public class SignInDto {
     public void setUloga(Korisnik.Uloga uloga) {
         this.uloga = uloga;
     }
+
+    public void setPonovljenaLozinka(String ponovljenaLozinka) { this.ponovljenaLozinka = ponovljenaLozinka; }
 }

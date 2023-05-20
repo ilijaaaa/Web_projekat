@@ -27,8 +27,8 @@ public class Korisnik {
     @Column
     @Enumerated(EnumType.STRING)
     protected Uloga uloga;
-    @OneToMany(mappedBy = "korisnik", fetch = FetchType.EAGER)
-    protected Set<Polica> police = new HashSet<>();
+    //@OneToMany(mappedBy = "korisnik", fetch = FetchType.EAGER)
+    //protected Set<Polica> police = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -108,13 +108,13 @@ public class Korisnik {
         this.uloga = uloga;
     }
 
-    public Set<Polica> getPolice() {
+    /*public Set<Polica> getPolice() {
         return police;
-    }
+    }*/
 
-    public void setPolice(Set<Polica> police) {
+    /*public void setPolice(Set<Polica> police) {
         this.police = police;
-    }
+    }*/
 
     @Override
     public String toString() {
