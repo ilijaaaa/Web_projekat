@@ -22,6 +22,20 @@ public class KorisnikRestController {
     @Autowired
     private  ZahtevZaAktivacijuService zahtevZaAktivacijuService;
 
+    @GetMapping("/korisnici")
+    public ResponseEntity<List<Korisnik>> getKorisnici() { return ResponseEntity.ok(korisnikService.findAll()); }
+
+    @GetMapping("/korisnici/{id}")
+    public ResponseEntity<Korisnik> getKorisnik(@PathVariable(name = "id") Long id){
+        Korisnik korisnik = korisnikService.findOne(id);
+
+        if(korisnik == null){
+            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
+        }
+
+        return ResponseEntity.ok(korisnik);
+    }
+
     @PostMapping("/zahtev")
     public ResponseEntity<String> zahtev(@RequestBody ZahtevZaAktivacijuDto zahtevDto){
 
@@ -97,7 +111,4 @@ public class KorisnikRestController {
         session.invalidate();
         return new ResponseEntity("Uspesno odjavljivanje", HttpStatus.OK);
     }
-
-
-
 }

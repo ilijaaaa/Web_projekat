@@ -8,6 +8,7 @@ import web.project.goodreads.repository.KorisnikRepository;
 import web.project.goodreads.repository.PolicaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class KorisnikService {
@@ -17,6 +18,13 @@ public class KorisnikService {
     public List<Korisnik> findAll()
     {
         return korisnikRepository.findAll();
+    }
+
+    public Korisnik findOne(Long id){
+        Optional<Korisnik> korisnik = korisnikRepository.findById(id);
+        if (korisnik.isPresent())
+            return korisnik.get();
+        return null;
     }
 
     public Korisnik login(String mejl, String lozinka) {
@@ -29,7 +37,4 @@ public class KorisnikService {
     public Korisnik save(Korisnik korisnik){
         return korisnikRepository.save(korisnik);
     }
-
-
-
 }
