@@ -18,6 +18,17 @@ public class ZahtevZaAktivaciju {
     @OneToOne
     private Autor autor;
 
+    ZahtevZaAktivaciju() {}
+
+    public ZahtevZaAktivaciju(String mejl, String telefon, String poruka) {
+        this.mejl = mejl;
+        this.telefon = telefon;
+        this.poruka = poruka;
+        this.datum = LocalDate.now();
+        this.status = RequestStatus.CEKANJE;
+        autor = null;
+    }
+
     @Override
     public String toString() {
         return "ZahtevZaAktivaciju{" +

@@ -19,6 +19,23 @@ public class KorisnikRestController {
     private KorisnikService korisnikService;
     @Autowired
     private PolicaService policaService;
+    @Autowired
+    private  ZahtevZaAktivacijuService zahtevZaAktivacijuService;
+
+    @PostMapping("/zahtev")
+    public ResponseEntity<String> zahtev(@RequestBody ZahtevZaAktivacijuDto zahtevDto){
+
+        List<Korisnik> korisnici = korisnikService.findAll();
+
+        for (Korisnik k : korisnici)
+            if(zahtevDto.getMejl().equals(k.getMejl()))
+                return new ResponseEntity("Zahtev je neuspesan", HttpStatus.BAD_REQUEST);
+
+        ZahtevZaAktivaciju zahtev = new ZahtevZaAktivaciju(zahtevDto.getMejl(), zahtevDto.getTelefon(), zahtevDto.getPoruka());
+        this.zahtevZaAktivacijuService.save(zahtev);
+
+        return ResponseEntity.ok("Zahtev uspesno prosledjen");
+    }
 
     @PostMapping("/login")
     public ResponseEntity<Set<Polica>> login(@RequestBody LoginDto loginDto, HttpSession session){
