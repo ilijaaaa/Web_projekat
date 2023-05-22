@@ -2,6 +2,7 @@ package web.project.goodreads.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import web.project.goodreads.entity.Korisnik;
 import web.project.goodreads.entity.Polica;
 import web.project.goodreads.repository.PolicaRepository;
 
@@ -16,15 +17,11 @@ public class PolicaService {
 
     public List<Polica> findAll() { return policaRepository.findAll(); }
 
-    public Set<Polica> findOne(Long id){
-        Set<Polica> police = new HashSet<>();
+    public List<Polica> findMany(Korisnik korisnik) { return policaRepository.findByKorisnik(korisnik); }
 
-        for(Polica p : policaRepository.findAll())
-            if(p.getKorisnik().getId() == id)
-                police.add(p);
+    public Polica findOne(String naziv) { return policaRepository.findByNaziv(naziv); }
 
-        return police;
-    }
+    public void deleteOne(String naziv) { policaRepository.deleteByNaziv(naziv);}
 
     public Polica save(Polica polica) { return policaRepository.save(polica); }
 }

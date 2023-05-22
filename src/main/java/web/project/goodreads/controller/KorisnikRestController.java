@@ -73,7 +73,7 @@ public class KorisnikRestController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<Korisnik> signin(@RequestBody SignInDto signInDto, HttpSession session){
+    public ResponseEntity<Korisnik> signin(@RequestBody SignInDto signInDto){
         if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
                 || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
             return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
@@ -88,16 +88,15 @@ public class KorisnikRestController {
                 return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
 
         Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
+        this.korisnikService.save(korisnik);
 
         Polica p1 = new Polica("Want to read", true, korisnik);
         Polica p2 = new Polica("Currently reading", true, korisnik);
         Polica p3 = new Polica("Read", true, korisnik);
-
         policaService.save(p1);
         policaService.save(p2);
         policaService.save(p3);
 
-        this.korisnikService.save(korisnik);
         return ResponseEntity.ok(korisnik);
     }
 
@@ -110,5 +109,95 @@ public class KorisnikRestController {
 
         session.invalidate();
         return new ResponseEntity("Uspesno odjavljivanje", HttpStatus.OK);
+    }
+
+    @PutMapping("/korisnik/ime")
+    public ResponseEntity izmeniIme(@RequestBody ImeDto imeDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        korisnik.setIme(imeDto.getIme());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesna izmena imena");
+    }
+
+    @PutMapping("/korisnik/prezime")
+    public ResponseEntity izmeniPrezime(@RequestBody PrezimeDto prezimeDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        korisnik.setPrezime(prezimeDto.getPrezime());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesna izmena prezimena");
+    }
+
+    @PostMapping("/korisnik/datum")
+    public ResponseEntity dodajDatum(@RequestBody DatumRodjenjaDto datumRodjenjaDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        korisnik.setDatumRodjenja(datumRodjenjaDto.getDatumRodjenja());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesno unet datum rodjenja");
+    }
+
+    @PostMapping("/korisnik/profilna")
+    public ResponseEntity dodajProfilnu(@RequestBody ProfilnaSlikaDto profilnaSlikaDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        korisnik.setProfilnaSlika(profilnaSlikaDto.getProfilnaSlika());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesno uneta profilna slika");
+    }
+
+    @PostMapping("/korisnik/opis")
+    public ResponseEntity dodajOpis(@RequestBody OpisDto opisDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        korisnik.setOpis(opisDto.getOpis());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesno unet opis");
+    }
+
+    @PutMapping("/korisnik/lozinka")
+    public ResponseEntity promeniLozinku(@RequestBody LozinkaDto lozinkaDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        if(!korisnik.getLozinka().equals(lozinkaDto.getStaraLozinka()))
+            return new ResponseEntity("Lozinke se ne poklapaju", HttpStatus.BAD_REQUEST);
+
+        korisnik.setLozinka(lozinkaDto.getNovaLozinka());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesno promenjena lozinka");
+    }
+
+    @PutMapping("/korisnik/mejl")
+    public ResponseEntity promeniMejl(@RequestBody MejlDto mejlDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        if(!korisnik.getMejl().equals(mejlDto.getStariMejl()))
+            return new ResponseEntity("Mejlovi se ne poklapaju", HttpStatus.BAD_REQUEST);
+
+        korisnik.setMejl(mejlDto.getNoviMejl());
+        korisnikService.save(korisnik);
+        return ResponseEntity.ok("Uspesno promenjen mejl");
     }
 }

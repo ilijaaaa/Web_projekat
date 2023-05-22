@@ -14,7 +14,7 @@ public class Polica {
     private boolean primarno;
     @OneToMany(mappedBy = "polica", fetch = FetchType.EAGER)
     private Set<StavkaPolice> stavke = new HashSet<>();
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Korisnik korisnik;
 
     public Polica() {}
