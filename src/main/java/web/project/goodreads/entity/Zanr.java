@@ -9,6 +9,12 @@ public class Zanr {
     @Column(unique = true)
     private String naziv;
 
+    public Zanr() {}
+
+    public Zanr(String naziv) {
+        this.naziv = naziv;
+    }
+
     public Long getId() {
         return id;
     }

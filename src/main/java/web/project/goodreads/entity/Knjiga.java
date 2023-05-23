@@ -23,6 +23,19 @@ public class Knjiga {
     @ManyToOne
     private Autor autor;
 
+    public Knjiga() {}
+
+    public Knjiga(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, Zanr zanr, Autor autor) {
+        this.naslov = naslov;
+        this.slika = slika;
+        this.opis = opis;
+        this.isbn = isbn;
+        this.datum = datum;
+        this.brStr = brStr;
+        this.zanr = zanr;
+        this.autor = autor;
+    }
+
     public Long getId() {
         return id;
     }
