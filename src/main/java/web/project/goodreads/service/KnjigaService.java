@@ -3,6 +3,7 @@ package web.project.goodreads.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.project.goodreads.entity.Knjiga;
+import web.project.goodreads.entity.Zanr;
 import web.project.goodreads.repository.KnjigaRepository;
 
 import java.util.List;
@@ -23,4 +24,8 @@ public class KnjigaService {
             return knjiga.get();
         return null;
     }
+
+    public Knjiga save(Knjiga knjiga) { return knjigaRepository.save(knjiga); }
+
+    public void deleteOne(Knjiga knjiga) { knjigaRepository.delete(knjiga);}
 }
