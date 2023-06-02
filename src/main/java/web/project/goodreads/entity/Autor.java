@@ -8,8 +8,19 @@ import java.util.Set;
 public class Autor extends Korisnik {
     @Column
     private Boolean aktivan;
-    @OneToMany(mappedBy = "autor", fetch = FetchType.EAGER)
-    private Set<Knjiga> knjige = new HashSet<>();
+
+    /*@OneToMany(mappedBy = "autor", fetch = FetchType.EAGER)
+    private Set<Knjiga> knjige = new HashSet<>();*/
+
+    public Autor() {}
+
+    public Boolean getAktivan() {
+        return aktivan;
+    }
+
+    public void setAktivan(Boolean aktivan) {
+        this.aktivan = aktivan;
+    }
 
     @Override
     public String toString() {
@@ -25,7 +36,6 @@ public class Autor extends Korisnik {
                 ", opis='" + opis + '\'' +
                 ", uloga=" + uloga +
                 ", aktivan=" + aktivan +
-                ", knjige=" + knjige +
                 '}';
     }
 }

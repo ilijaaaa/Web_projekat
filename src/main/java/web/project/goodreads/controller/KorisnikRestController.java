@@ -22,7 +22,9 @@ public class KorisnikRestController {
     @Autowired
     private StavkaPoliceService stavkaPoliceService;
     @Autowired
-    private  ZahtevZaAktivacijuService zahtevZaAktivacijuService;
+    private AutorService autorService;
+    @Autowired
+    private ZahtevZaAktivacijuService zahtevZaAktivacijuService;
 
     @GetMapping("/korisnici")
     public  List<Korisnik> getKorisinic() { return korisnikService.findAll(); }
@@ -58,21 +60,6 @@ public class KorisnikRestController {
         KorisnikDto korisnikDto = new KorisnikDto(korisnikRecenzijaDto, policeDto);
 
         return ResponseEntity.ok(korisnikDto);
-    }
-
-    @PostMapping("/zahtev")
-    public ResponseEntity<String> zahtev(@RequestBody ZahtevZaAktivacijuDto zahtevDto){
-
-        List<Korisnik> korisnici = korisnikService.findAll();
-
-        for (Korisnik k : korisnici)
-            if(zahtevDto.getMejl().equals(k.getMejl()))
-                return new ResponseEntity("Zahtev je neuspesan", HttpStatus.BAD_REQUEST);
-
-        ZahtevZaAktivaciju zahtev = new ZahtevZaAktivaciju(zahtevDto.getMejl(), zahtevDto.getTelefon(), zahtevDto.getPoruka());
-        this.zahtevZaAktivacijuService.save(zahtev);
-
-        return ResponseEntity.ok("Zahtev uspesno prosledjen");
     }
 
     @PostMapping("/login")
@@ -209,5 +196,83 @@ public class KorisnikRestController {
 
         korisnikService.save(korisnik);
         return ResponseEntity.ok("Uspesna izmena");
+    }
+
+
+
+    @PostMapping("/autor")
+    public ResponseEntity<Autor> addAutor(@RequestBody AutorDto autorDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if (korisnik == null)
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
+        if(korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
+            return new ResponseEntity("Nemate adminska prava", HttpStatus.FORBIDDEN);
+
+        Autor autor = new Autor();
+        autor.setUloga(Korisnik.Uloga.AUTOR);
+        autor.setIme(autorDto.getIme());
+        autor.setPrezime(autorDto.getPrezime());
+        autor.setDatumRodjenja(autorDto.getDatumRodjenja());
+        autor.setAktivan(false);
+        autorService.save(autor);
+
+        return ResponseEntity.ok(autor);
+    }
+
+    @PutMapping("/odobri/{id}")
+    public ResponseEntity<ZahtevOdgovorDto> odobriZahtev(@PathVariable(name ="id") Long id, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
+        ZahtevZaAktivaciju zahtevZaAktivaciju = zahtevZaAktivacijuService.findOne(id);
+
+        if(zahtevZaAktivaciju == null)
+            return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
+
+        if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
+            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
+
+        zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODOBRENO);
+        zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
+
+        Autor autor = zahtevZaAktivaciju.getAutor();
+        autor.setAktivan(true);
+        this.autorService.save(autor);
+
+        Polica p1 = new Polica("Want to read", true, autor);
+        Polica p2 = new Polica("Currently reading", true, autor);
+        Polica p3 = new Polica("Read", true, autor);
+        policaService.save(p1);
+        policaService.save(p2);
+        policaService.save(p3);
+
+        ZahtevOdgovorDto zahtevOdgovorDto = new ZahtevOdgovorDto(zahtevZaAktivaciju.getMejl(), "Zahtev prihvacen, lozinka: 123456789");
+        return ResponseEntity.ok(zahtevOdgovorDto);
+    }
+
+   @PutMapping("/odbij/{id}")
+    public ResponseEntity<ZahtevOdgovorDto> odbijZahtev(@PathVariable(name ="id") Long id, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
+        ZahtevZaAktivaciju zahtevZaAktivaciju = zahtevZaAktivacijuService.findOne(id);
+
+        if(zahtevZaAktivaciju == null)
+            return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
+
+        if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
+            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
+
+        zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODBIJENO);
+        zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
+
+        ZahtevOdgovorDto zahtevOdgovorDto = new ZahtevOdgovorDto(zahtevZaAktivaciju.getMejl(), "Zahtev odbijen");
+        return ResponseEntity.ok(zahtevOdgovorDto);
     }
 }
