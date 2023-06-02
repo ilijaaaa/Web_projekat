@@ -6,24 +6,28 @@ import web.project.goodreads.entity.Knjiga;
 import web.project.goodreads.entity.Zanr;
 import web.project.goodreads.repository.KnjigaRepository;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class KnjigaService {
     @Autowired
     private KnjigaRepository knjigaRepository;
 
-    public List<Knjiga> findAll(){
-        return knjigaRepository.findAll();
-    }
+    public List<Knjiga> findAll() { return knjigaRepository.findAll(); }
 
-    public Knjiga findOne(Long id){
-        Optional<Knjiga> knjiga = knjigaRepository.findById(id);
+    public Set<Knjiga> findAll(String naslov) { return knjigaRepository.findAllByNaslov(naslov); }
+
+    public Knjiga findOne(Long id) { return knjigaRepository.findById(id).orElse(null); }
+
+    /*public Knjiga findOne(String isbn){
+        Optional<Knjiga> knjiga = Optional.ofNullable(knjigaRepository.findByIsbn(isbn));
         if (knjiga.isPresent())
             return knjiga.get();
         return null;
-    }
+    }*/
 
     public Knjiga save(Knjiga knjiga) { return knjigaRepository.save(knjiga); }
 

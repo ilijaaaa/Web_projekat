@@ -12,8 +12,6 @@ public class Polica {
     private String naziv;
     @Column
     private boolean primarno;
-    @OneToMany(mappedBy = "polica", fetch = FetchType.EAGER)
-    private Set<StavkaPolice> stavke = new HashSet<>();
     @ManyToOne
     private Korisnik korisnik;
 
@@ -49,14 +47,6 @@ public class Polica {
         this.primarno = primarno;
     }
 
-    public Set<StavkaPolice> getStavke() {
-        return stavke;
-    }
-
-    public void setStavke(Set<StavkaPolice> stavke) {
-        this.stavke = stavke;
-    }
-
     public Korisnik getKorisnik() {
         return korisnik;
     }
@@ -71,7 +61,6 @@ public class Polica {
                 "id=" + id +
                 ", naziv='" + naziv + '\'' +
                 ", primarno=" + primarno +
-                ", stavke=" + stavke +
                 ", korisnik=" + korisnik +
                 '}';
     }

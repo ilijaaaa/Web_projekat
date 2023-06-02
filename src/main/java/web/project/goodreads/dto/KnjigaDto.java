@@ -7,18 +7,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class KnjigaDto {
-
-    private Long id;
     private String naslov, slika, opis, isbn;
     private LocalDate datum;
     int brStr;
     private BigDecimal ocena;
+    private StringDto zanr;
+    private KorisnikRecenzijaDto autor;
 
-    private Zanr zanr;
+    public KnjigaDto() {}
 
-    private Autor autor;
-
-    public KnjigaDto(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, Zanr zanr, Autor autor) {
+    public KnjigaDto(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, StringDto zanr, KorisnikRecenzijaDto autor) {
         this.naslov = naslov;
         this.slika = slika;
         this.opis = opis;
@@ -27,14 +25,6 @@ public class KnjigaDto {
         this.datum = datum;
         this.zanr = zanr;
         this.autor = autor;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNaslov() {
@@ -85,19 +75,19 @@ public class KnjigaDto {
         this.datum = datum;
     }
 
-    public Zanr getZanr() {
+    public StringDto getZanr() {
         return zanr;
     }
 
-    public void setZanr(Zanr zanr) {
+    public void setZanr(StringDto zanr) {
         this.zanr = zanr;
     }
 
-    public Autor getAutor() {
+    public KorisnikRecenzijaDto getAutor() {
         return autor;
     }
 
-    public void setAutor(Autor autor) {
+    public void setAutor(KorisnikRecenzijaDto autor) {
         this.autor = autor;
     }
 }

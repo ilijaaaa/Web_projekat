@@ -14,6 +14,13 @@ public class StavkaPolice {
     @OneToOne(mappedBy = "stavka_police")
     private Recenzija recenzija;
 
+    public StavkaPolice() {}
+
+    public StavkaPolice(Polica p, Knjiga k){
+        polica = p;
+        knjiga = k;
+    }
+
     public Long getId() {
         return id;
     }

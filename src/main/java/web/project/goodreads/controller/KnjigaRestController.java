@@ -11,7 +11,9 @@ import web.project.goodreads.entity.*;
 import web.project.goodreads.service.AutorService;
 import web.project.goodreads.service.KnjigaService;
 import web.project.goodreads.service.RecenzijaService;
+import web.project.goodreads.service.StavkaPoliceService;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -25,27 +27,72 @@ public class KnjigaRestController {
     private AutorService autorService;
 
     @Autowired
+    private StavkaPoliceService stavkaPoliceService;
+
+    @Autowired
     private RecenzijaService recenzijaService;
 
     @GetMapping("/knjige")
-    public ResponseEntity<List<Knjiga>> getKnjige(){
+    public ResponseEntity<Set<KnjigaDto>> getKnjige(){
         List<Knjiga> knjige = knjigaService.findAll();
+        Set<KnjigaDto> knjigeDto = new HashSet<>();
 
-        return ResponseEntity.ok(knjige);
-    }
-
-    @GetMapping("/knjige/{id}")
-    public ResponseEntity<Knjiga> getKnjiga(@PathVariable(name = "id") Long id){
-        Knjiga knjiga = knjigaService.findOne(id);
-
-        if(knjiga == null){
-            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
+        for(Knjiga k : knjige){
+            StringDto zanr = new StringDto(k.getZanr().getNaziv());
+            KorisnikRecenzijaDto autor = new KorisnikRecenzijaDto(k.getAutor().getIme(), k.getAutor().getPrezime(), k.getAutor().getKorisnickoIme(), k.getAutor().getProfilnaSlika());
+            KnjigaDto knjigaDto = new KnjigaDto(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), zanr, autor);
+            knjigeDto.add(knjigaDto);
         }
 
-        return ResponseEntity.ok(knjiga);
+        return ResponseEntity.ok(knjigeDto);
     }
 
-    @PostMapping("/dodaj-knjigu")
+    @GetMapping("/knjige/{naslov}")
+    public ResponseEntity<Set<KnjigaDto>> getKnjiga(@PathVariable(name = "naslov") String naslov){
+        Set<Knjiga> knjige = knjigaService.findAll(naslov);
+
+        if(knjige.isEmpty()){
+            return new ResponseEntity("Knjige sa takvim naslovom ne postoje", HttpStatus.NOT_FOUND);
+        }
+
+        Set<KnjigaDto> knjigeDto = new HashSet<>();
+
+        for(Knjiga k : knjige){
+            StringDto zanr = new StringDto(k.getZanr().getNaziv());
+            KorisnikRecenzijaDto autor = new KorisnikRecenzijaDto(k.getAutor().getIme(), k.getAutor().getPrezime(), k.getAutor().getKorisnickoIme(), k.getAutor().getProfilnaSlika());
+            KnjigaDto knjigaDto = new KnjigaDto(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), zanr, autor);
+            knjigeDto.add(knjigaDto);
+        }
+
+        return ResponseEntity.ok(knjigeDto);
+    }
+
+    @GetMapping("/knjiga/{id}")
+    public ResponseEntity<PregledKnjigeDto> getKnjiga(@PathVariable(name = "id") Long id){
+        Knjiga k = knjigaService.findOne(id);
+        Set<RecenzijaDto> recenzijeDto = new HashSet<>();
+        List<StavkaPolice> stavkePolice = stavkaPoliceService.findAll(k);
+
+        if(k == null)
+            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
+
+        StringDto zanrDto = new StringDto(k.getZanr().getNaziv());
+        KorisnikRecenzijaDto autor = new KorisnikRecenzijaDto(k.getAutor().getIme(), k.getAutor().getPrezime(), k.getAutor().getKorisnickoIme(), k.getAutor().getProfilnaSlika());
+        KnjigaDto knjigaDto = new KnjigaDto(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), zanrDto, autor);
+
+        for(StavkaPolice sp : stavkePolice)
+            if(sp.getRecenzija() != null){
+                KorisnikRecenzijaDto korisnikRecenzijaDto = new KorisnikRecenzijaDto(sp.getRecenzija().getKorisnik().getIme(), sp.getRecenzija().getKorisnik().getPrezime(), sp.getRecenzija().getKorisnik().getKorisnickoIme(), sp.getRecenzija().getKorisnik().getProfilnaSlika());
+                RecenzijaDto recenzijaDto = new RecenzijaDto(sp.getRecenzija().getOcena(), sp.getRecenzija().getTekst(), sp.getRecenzija().getDatum(), korisnikRecenzijaDto);
+                recenzijeDto.add(recenzijaDto);
+            }
+
+        PregledKnjigeDto pregledKnjigeDto = new PregledKnjigeDto(knjigaDto, recenzijeDto);
+
+        return ResponseEntity.ok(pregledKnjigeDto);
+    }
+
+    /*@PostMapping("/dodaj-knjigu")
     public ResponseEntity<String> dodajKnjigu(@RequestBody KnjigaDto knjigaDto) {
         List<Knjiga> knjige = knjigaService.findAll();
 
@@ -66,7 +113,7 @@ public class KnjigaRestController {
         }
 
         return ResponseEntity.ok("Neuspesno dodavanje knjiga");
-    }
+    }*/
 
 
     @PutMapping("/knjiga/naslov")
@@ -138,7 +185,7 @@ public class KnjigaRestController {
     }
 
 
-    @Transactional
+    /*@Transactional
     @DeleteMapping("/knjiga/delete")
     public ResponseEntity<List<Knjiga>> deleteKnjiga(@RequestBody KnjigaDto knjigaDto){
 
@@ -158,7 +205,7 @@ public class KnjigaRestController {
 
         knjigaService.deleteOne(knjiga);
         return  ResponseEntity.ok(knjigaService.findAll());
-    }
+    }*/
 
 
 }

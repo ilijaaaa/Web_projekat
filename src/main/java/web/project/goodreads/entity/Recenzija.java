@@ -18,6 +18,16 @@ public class Recenzija {
     @OneToOne
     private StavkaPolice stavka_police;
 
+    public Recenzija() {}
+
+    public Recenzija(int ocena, String tekst, LocalDate datum, Korisnik korisnik, StavkaPolice stavka_police) {
+        this.ocena = ocena;
+        this.tekst = tekst;
+        this.datum = datum;
+        this.korisnik = korisnik;
+        this.stavka_police = stavka_police;
+    }
+
     public Long getId() {
         return id;
     }

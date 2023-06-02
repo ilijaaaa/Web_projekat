@@ -7,20 +7,26 @@ import web.project.goodreads.repository.*;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
 public class RecenzijaService {
     @Autowired
     private RecenzijaRepository recenzijaRepository;
-    @Autowired
-    private PolicaRepository policaRepository;
-    @Autowired
-    private StavkaPoliceRepository stavkaPoliceRepository;
 
     public List<Recenzija> findAll() { return recenzijaRepository.findAll(); }
 
-    public Set<Recenzija> findOne(Long id){
+    public Recenzija findOne(Long id){
+        Optional<Recenzija> recenzija = recenzijaRepository.findById(id);
+
+        if(recenzija.isPresent())
+            return recenzija.get();
+
+        return null;
+    }
+
+    /*public Set<Recenzija> findOne(Long id){
         Set<Recenzija> recenzije = new HashSet<>();
 
         for(Polica p : policaRepository.findAll())
@@ -29,5 +35,9 @@ public class RecenzijaService {
                     recenzije.add(s.getRecenzija());
 
         return recenzije;
-    }
+    }*/
+
+    public Recenzija save(Recenzija recenzija) { return recenzijaRepository.save(recenzija); }
+
+    public void delete(Long id) { recenzijaRepository.deleteById(id); }
 }

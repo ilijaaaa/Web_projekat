@@ -9,7 +9,9 @@ import web.project.goodreads.dto.ZanrDto;
 import web.project.goodreads.entity.Zanr;
 import web.project.goodreads.service.ZanrService;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -18,7 +20,17 @@ public class ZanrRestController {
     private ZanrService zanrService;
 
     @GetMapping("/zanrovi")
-    public ResponseEntity<List<Zanr>> getZanrovi() { return ResponseEntity.ok(zanrService.findAll()); }
+    public ResponseEntity<Set<ZanrDto>> getZanrovi(){
+        List<Zanr> zanrovi = zanrService.findAll();
+        Set<ZanrDto> zanroviDto = new HashSet<>();
+
+        for(Zanr z : zanrovi){
+            ZanrDto zanrDto = new ZanrDto(z.getNaziv());
+            zanroviDto.add(zanrDto);
+        }
+
+        return ResponseEntity.ok(zanroviDto);
+    }
 
     @PostMapping("/dodaj-zanr")
     public ResponseEntity<String> dodajZanr(@RequestBody ZanrDto zanrDto)
