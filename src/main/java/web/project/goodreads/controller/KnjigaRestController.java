@@ -40,12 +40,24 @@ public class KnjigaRestController {
 
         if(knjiga == null){
             return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
-        }
 
-        return ResponseEntity.ok(knjiga);
+        StringDto zanrDto = new StringDto(k.getZanr().getNaziv());
+        KorisnikRecenzijaDto autor = new KorisnikRecenzijaDto(k.getAutor().getIme(), k.getAutor().getPrezime(), k.getAutor().getKorisnickoIme(), k.getAutor().getProfilnaSlika());
+        KnjigaDto knjigaDto = new KnjigaDto(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), zanrDto, autor);
+
+        for(StavkaPolice sp : stavkePolice)
+            if(sp.getRecenzija() != null){
+                KorisnikRecenzijaDto korisnikRecenzijaDto = new KorisnikRecenzijaDto(sp.getRecenzija().getKorisnik().getIme(), sp.getRecenzija().getKorisnik().getPrezime(), sp.getRecenzija().getKorisnik().getKorisnickoIme(), sp.getRecenzija().getKorisnik().getProfilnaSlika());
+                RecenzijaDto recenzijaDto = new RecenzijaDto(sp.getRecenzija().getOcena(), sp.getRecenzija().getTekst(), sp.getRecenzija().getDatum(), korisnikRecenzijaDto);
+                recenzijeDto.add(recenzijaDto);
+            }
+
+        PregledKnjigeDto pregledKnjigeDto = new PregledKnjigeDto(knjigaDto, recenzijeDto);
+
+        return ResponseEntity.ok(pregledKnjigeDto);
     }
 
-    @PostMapping("/dodaj-knjigu")
+    /*@PostMapping("/dodaj-knjigu")
     public ResponseEntity<String> dodajKnjigu(@RequestBody KnjigaDto knjigaDto) {
         List<Knjiga> knjige = knjigaService.findAll();
 
@@ -70,7 +82,12 @@ public class KnjigaRestController {
 
 
     @PutMapping("/knjiga/naslov")
-    public ResponseEntity<String> izmeniNaslov(@RequestBody NaslovDto naslovDto){
+    public ResponseEntity<String> izmeniNaslov(@RequestBody NaslovDto naslovDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga izmenjena = null;
 
@@ -87,7 +104,12 @@ public class KnjigaRestController {
     }
 
     @PutMapping("/knjiga/naslovna-fotografija")
-    public ResponseEntity<String> izmeniNaslovnu(@RequestBody NaslovnaDto naslovnaDto){
+    public ResponseEntity<String> izmeniNaslovnu(@RequestBody NaslovnaDto naslovnaDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga izmenjena = null;
 
@@ -104,7 +126,12 @@ public class KnjigaRestController {
     }
 
     @PutMapping("/knjiga/broj-strana")
-    public ResponseEntity<String> izmeniBrojStrana(@RequestBody BrStrDto brStrDto){
+    public ResponseEntity<String> izmeniBrojStrana(@RequestBody BrStrDto brStrDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga izmenjena = null;
 
@@ -121,7 +148,12 @@ public class KnjigaRestController {
     }
 
     @PutMapping("/knjiga/opis-knjige")
-    public ResponseEntity<String> izmeniOpisK(@RequestBody OpisKDto opisDto){
+    public ResponseEntity<String> izmeniOpisK(@RequestBody OpisKDto opisDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga izmenjena = null;
 
@@ -140,7 +172,11 @@ public class KnjigaRestController {
 
     @Transactional
     @DeleteMapping("/knjiga/delete")
-    public ResponseEntity<List<Knjiga>> deleteKnjiga(@RequestBody KnjigaDto knjigaDto){
+    public ResponseEntity<List<Knjiga>> deleteKnjiga(@RequestBody KnjigaDto knjigaDto, HttpSession session){
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
 
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga knjiga = null;
@@ -158,7 +194,7 @@ public class KnjigaRestController {
 
         knjigaService.deleteOne(knjiga);
         return  ResponseEntity.ok(knjigaService.findAll());
-    }
+    }*/
 
 
 }

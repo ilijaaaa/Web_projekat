@@ -20,4 +20,21 @@ public class ZahtevZaAktivacijuService {
 
     public ZahtevZaAktivaciju save(ZahtevZaAktivaciju zahtev) { return zahtevZaAktivacijuRepository.save(zahtev); }
 
+    /*
+    private final JavaMailSender mailSender;
+
+    public ZahtevService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    private void posaljiMejlSaLozinkom(String email, String lozinka) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(email);
+        mailMessage.setSubject("Dobrodošli na našu platformu");
+        mailMessage.setText("Vaša nova lozinka je: " + lozinka);
+
+        mailSender.send(mailMessage);
+    }
+     */
+
 }

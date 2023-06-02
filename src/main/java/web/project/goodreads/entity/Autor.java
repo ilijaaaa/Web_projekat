@@ -28,4 +28,13 @@ public class Autor extends Korisnik {
                 ", knjige=" + knjige +
                 '}';
     }
+
+    public Autor(String mejl) {
+        this.mejl = mejl;
+        this.uloga = Korisnik.Uloga.AUTOR;
+        this.aktivan = true;
+    }
+
+    public Autor() {}
+
 }
