@@ -3,38 +3,25 @@ package web.project.goodreads.dto;
 import web.project.goodreads.entity.Autor;
 import web.project.goodreads.entity.Zanr;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public class KnjigaDto {
-
-    private Long id;
-    private String naslov, slika, opis, isbn;
+public class AzuriranjeKnjigeDto {
+    private String naslov, slika, isbn, opis;
     private LocalDate datum;
     int brStr;
-    private BigDecimal ocena;
-    private StringDto zanr;
-    private KorisnikRecenzijaDto autor;
+    private Zanr zanr;
+    private Autor autor;
 
-    public KnjigaDto() {}
-
-    public KnjigaDto(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, StringDto zanr, KorisnikRecenzijaDto autor) {
+    public AzuriranjeKnjigeDto() {}
+    public AzuriranjeKnjigeDto(String naslov, String slika, String isbn, String opis, LocalDate datum, int brStr, Zanr zanr, Autor autor) {
         this.naslov = naslov;
         this.slika = slika;
-        this.opis = opis;
         this.isbn = isbn;
-        this.brStr = brStr;
+        this.opis = opis;
         this.datum = datum;
+        this.brStr = brStr;
         this.zanr = zanr;
         this.autor = autor;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNaslov() {
@@ -53,14 +40,6 @@ public class KnjigaDto {
         this.slika = slika;
     }
 
-    public String getOpis() {
-        return opis;
-    }
-
-    public void setOpis(String opis) {
-        this.opis = opis;
-    }
-
     public String getIsbn() {
         return isbn;
     }
@@ -69,12 +48,12 @@ public class KnjigaDto {
         this.isbn = isbn;
     }
 
-    public int getBrStr() {
-        return brStr;
+    public String getOpis() {
+        return opis;
     }
 
-    public void setBrStr(int brStr) {
-        this.brStr = brStr;
+    public void setOpis(String opis) {
+        this.opis = opis;
     }
 
     public LocalDate getDatum() {
@@ -85,19 +64,27 @@ public class KnjigaDto {
         this.datum = datum;
     }
 
-    public StringDto getZanr() {
+    public int getBrStr() {
+        return brStr;
+    }
+
+    public void setBrStr(int brStr) {
+        this.brStr = brStr;
+    }
+
+    public Zanr getZanr() {
         return zanr;
     }
 
-    public void setZanr(StringDto zanr) {
+    public void setZanr(Zanr zanr) {
         this.zanr = zanr;
     }
 
-    public KorisnikRecenzijaDto getAutor() {
+    public Autor getAutor() {
         return autor;
     }
 
-    public void setAutor(KorisnikRecenzijaDto autor) {
+    public void setAutor(Autor autor) {
         this.autor = autor;
     }
 }

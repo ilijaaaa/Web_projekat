@@ -1,7 +1,7 @@
 package web.project.goodreads.dto;
 
 public class StringDto {
-    String value;
+    private String value;
 
     public StringDto() {}
 

@@ -15,6 +15,9 @@ public class RecenzijaService {
     @Autowired
     private RecenzijaRepository recenzijaRepository;
 
+    @Autowired
+    private PolicaRepository policaRepository;
+
     public List<Recenzija> findAll() { return recenzijaRepository.findAll(); }
 
     public Recenzija findOne(Long id){
@@ -26,7 +29,7 @@ public class RecenzijaService {
         return null;
     }
 
-    /*public Set<Recenzija> findOne(Long id){
+    /*public Set<Recenzija> findOneSet(Long id){
         Set<Recenzija> recenzije = new HashSet<>();
 
         for(Polica p : policaRepository.findAll())

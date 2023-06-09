@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import web.project.goodreads.dto.*;
 import web.project.goodreads.entity.*;
-import web.project.goodreads.service.AutorService;
-import web.project.goodreads.service.KnjigaService;
-import web.project.goodreads.service.RecenzijaService;
-import web.project.goodreads.service.StavkaPoliceService;
+import web.project.goodreads.service.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +28,9 @@ public class KnjigaRestController {
 
     @Autowired
     private RecenzijaService recenzijaService;
+
+    @Autowired
+    private ZanrService zanrService;
 
     @GetMapping("/knjige")
     public ResponseEntity<Set<KnjigaDto>> getKnjige(){
@@ -93,101 +93,100 @@ public class KnjigaRestController {
     }
 
     /*@PostMapping("/dodaj-knjigu")
-    public ResponseEntity<String> dodajKnjigu(@RequestBody KnjigaDto knjigaDto) {
+    public ResponseEntity<String> dodajKnjigu(@RequestBody KnjigaDto knjigaDto, HttpSession session) {
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.CITALAC))
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
 
         for (Knjiga k : knjige)
             if (knjigaDto.getIsbn().equals(k.getIsbn()))
                 return new ResponseEntity("Ova knjiga vec postoji", HttpStatus.BAD_REQUEST);
 
-        List<Autor> autori = autorService.findAll();
+        Autor autor = autorService.findOne(knjigaDto.getAutor().getId());
+        if(autor == null)
+            return new ResponseEntity("Ne postoji taj autor u bazi", HttpStatus.BAD_REQUEST);
 
-        for (Autor a : autori)
-        {
-            if (knjigaDto.getAutor().getId().equals(a.getId()) && knjigaDto.getAutor().getIme().equals(a.getIme()) && knjigaDto.getAutor().getPrezime().equals(a.getPrezime()))
-            {
-                Knjiga knjiga = new Knjiga(knjigaDto.getNaslov(), knjigaDto.getSlika(), knjigaDto.getOpis(), knjigaDto.getIsbn(), knjigaDto.getDatum(), knjigaDto.getBrStr(), knjigaDto.getZanr(), knjigaDto.getAutor());
-                this.knjigaService.save(knjiga);
-                return new ResponseEntity("Uspesno dodata knjiga", HttpStatus.CREATED);
-            }
+        //zbrka oko zanra
+        (!zanr.isEmpty()) {
+            Zanr zanrzanr = zanr.iterator().next();
+            Knjiga knjiga = new Knjiga(knjigaDto.getNaslov(), knjigaDto.getSlika(), knjigaDto.getOpis(), knjigaDto.getIsbn(), knjigaDto.getDatum(), knjigaDto.getBrStr(), zanrzanr, autor);
+            knjigaService.save(knjiga);
+        } else {
+            return new ResponseEntity("Ne postoji taj zanr u bazi", HttpStatus.BAD_REQUEST);
         }
+        if(zanr == null)
+            return new ResponseEntity("Ne postoji taj zanr u bazi", HttpStatus.BAD_REQUEST);
 
-        return ResponseEntity.ok("Neuspesno dodavanje knjiga");
+        List<Zanr> zanrovi = zanrService.findAll();
+        Zanr zanr = null;
+        for (Zanr z : zanrovi)
+            if (knjigaDto.getZanr().getValue().equals(z.getNaziv())) {
+                zanr = z;
+            }
+
+        Knjiga knjiga = new Knjiga(knjigaDto.getNaslov(), knjigaDto.getSlika(), knjigaDto.getOpis(), knjigaDto.getIsbn(), knjigaDto.getDatum(), knjigaDto.getBrStr(), autor);
+        knjigaService.save(knjiga);
+
+        return ResponseEntity.ok("Kao Knjiga uspesno dodata");
     }*/
 
+    @PutMapping("/knjiga/izmeni")
+    public ResponseEntity<String> azurirajKnjigu(@RequestBody AzuriranjeKnjigeDto azuriranjeKnjigeDto, HttpSession session)
+    {
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
-    @PutMapping("/knjiga/naslov")
-    public ResponseEntity<String> izmeniNaslov(@RequestBody NaslovDto naslovDto){
+        if ((korisnik == null) || (korisnik.getUloga() == Korisnik.Uloga.CITALAC))
+            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+
         List<Knjiga> knjige = knjigaService.findAll();
-        Knjiga izmenjena = null;
+        Knjiga knjiga = null;
 
         for (Knjiga k : knjige)
-            if(naslovDto.getIsbn().equals(k.getIsbn()))
-                izmenjena = k;
+            if (azuriranjeKnjigeDto.getIsbn().equals(k.getIsbn()))
+                knjiga = k;
 
-        if(izmenjena == null)
-            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
+        if(knjiga == null)
+            return new ResponseEntity("Ova knjiga ne postoji", HttpStatus.NOT_FOUND);
 
-        izmenjena.setNaslov(naslovDto.getNaslov());
-        knjigaService.save(izmenjena);
-        return ResponseEntity.ok("Naslov knjige uspesno izmenjen");
+        if(azuriranjeKnjigeDto.getNaslov() != null)
+            knjiga.setNaslov(azuriranjeKnjigeDto.getNaslov());
+
+        if(azuriranjeKnjigeDto.getSlika() != null)
+            knjiga.setSlika(azuriranjeKnjigeDto.getSlika());
+
+        if(azuriranjeKnjigeDto.getOpis() != null)
+            knjiga.setOpis(azuriranjeKnjigeDto.getOpis());
+
+        if(azuriranjeKnjigeDto.getDatum() != null)
+            knjiga.setDatum(azuriranjeKnjigeDto.getDatum());
+
+        if(azuriranjeKnjigeDto.getOpis() != null)
+            knjiga.setOpis(azuriranjeKnjigeDto.getOpis());
+
+        if(azuriranjeKnjigeDto.getBrStr() != 0)
+            knjiga.setBrStr(azuriranjeKnjigeDto.getBrStr());
+/*
+        if(azuriranjeKnjigeDto.getZanr() != null)
+            knjiga.setZanr(azuriranjeKnjigeDto.getZanr());
+
+        if(azuriranjeKnjigeDto.getAutor() != null)
+            knjiga.setAutor(azuriranjeKnjigeDto.getAutor());
+*/
+        knjigaService.save(knjiga);
+        return ResponseEntity.ok("Uspesna izmena");
     }
-
-    @PutMapping("/knjiga/naslovna-fotografija")
-    public ResponseEntity<String> izmeniNaslovnu(@RequestBody NaslovnaDto naslovnaDto){
-        List<Knjiga> knjige = knjigaService.findAll();
-        Knjiga izmenjena = null;
-
-        for (Knjiga k : knjige)
-            if(naslovnaDto.getIsbn().equals(k.getIsbn()))
-                izmenjena = k;
-
-        if(izmenjena == null)
-            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
-
-        izmenjena.setSlika(naslovnaDto.getSlika());
-        knjigaService.save(izmenjena);
-        return ResponseEntity.ok("Naslovna fotografija knjige uspesno izmenjena");
-    }
-
-    @PutMapping("/knjiga/broj-strana")
-    public ResponseEntity<String> izmeniBrojStrana(@RequestBody BrStrDto brStrDto){
-        List<Knjiga> knjige = knjigaService.findAll();
-        Knjiga izmenjena = null;
-
-        for (Knjiga k : knjige)
-            if(brStrDto.getIsbn().equals(k.getIsbn()))
-                izmenjena = k;
-
-        if(izmenjena == null)
-            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
-
-        izmenjena.setBrStr(brStrDto.getBrStr());
-        knjigaService.save(izmenjena);
-        return ResponseEntity.ok("Broj strana knjige uspesno izmenjen");
-    }
-
-    @PutMapping("/knjiga/opis-knjige")
-    public ResponseEntity<String> izmeniOpisK(@RequestBody OpisKDto opisDto){
-        List<Knjiga> knjige = knjigaService.findAll();
-        Knjiga izmenjena = null;
-
-        for (Knjiga k : knjige)
-            if(opisDto.getIsbn().equals(k.getIsbn()))
-                izmenjena = k;
-
-        if(izmenjena == null)
-            return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
-
-        izmenjena.setOpis(opisDto.getOpis());
-        knjigaService.save(izmenjena);
-        return ResponseEntity.ok("Opis knjige uspesno izmenjen");
-    }
-
 
     /*@Transactional
     @DeleteMapping("/knjiga/delete")
-    public ResponseEntity<List<Knjiga>> deleteKnjiga(@RequestBody KnjigaDto knjigaDto){
+    public ResponseEntity<List<Knjiga>> deleteKnjiga(@RequestBody KnjigaDto knjigaDto, HttpSession session){
+
+        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+
+        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
+            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
 
         List<Knjiga> knjige = knjigaService.findAll();
         Knjiga knjiga = null;
@@ -199,8 +198,12 @@ public class KnjigaRestController {
         if(knjiga == null)
             return new ResponseEntity("Knjiga ne postoji", HttpStatus.NOT_FOUND);
 
-        Set<Recenzija> recenzije = recenzijaService.findOne(knjigaDto.getId());
-        if(!recenzije.isEmpty())
+        //Set<Recenzija> recenzije = recenzijaService.findOneSet(knjigaDto.getId());
+        //if(!recenzije.isEmpty())
+        //    return new ResponseEntity("Brisanje knjige nije moguce", HttpStatus.FORBIDDEN);
+
+        Recenzija r = recenzijaService.findOne(knjigaDto.getId());
+        if(r != null)
             return new ResponseEntity("Brisanje knjige nije moguce", HttpStatus.FORBIDDEN);
 
         knjigaService.deleteOne(knjiga);

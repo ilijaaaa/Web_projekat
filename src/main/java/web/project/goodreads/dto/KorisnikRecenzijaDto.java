@@ -1,6 +1,8 @@
 package web.project.goodreads.dto;
 
 public class KorisnikRecenzijaDto {
+
+    private Long id;
     private String ime, prezime, korisnickoIme, profilnaSlika;
 
     public KorisnikRecenzijaDto() {
@@ -11,6 +13,14 @@ public class KorisnikRecenzijaDto {
         this.prezime = prezime;
         this.korisnickoIme = korisnickoIme;
         this.profilnaSlika = profilnaSlika;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getIme() {

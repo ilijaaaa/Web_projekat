@@ -11,6 +11,12 @@ public class Zanr {
 
     public Zanr() {}
 
+    public Zanr(Zanr z)
+    {
+        this.id = z.id;
+        this.naziv = z.naziv;
+    }
+
     public Zanr(String naziv) {
         this.naziv = naziv;
     }

@@ -14,6 +14,19 @@ public class Autor extends Korisnik {
 
     public Autor() {}
 
+    public Autor(Autor a) {
+        this.ime = a.ime;
+        this.prezime = a.prezime;
+        this.korisnickoIme = a.korisnickoIme;
+        this.mejl = a.mejl;
+        this.lozinka = a.lozinka;
+        this.datumRodjenja = a.datumRodjenja;
+        this.profilnaSlika = a.profilnaSlika;
+        this.opis = a.opis;
+        this.uloga = a.uloga;
+        this.aktivan = a.aktivan;
+    }
+
     public Boolean getAktivan() {
         return aktivan;
     }
