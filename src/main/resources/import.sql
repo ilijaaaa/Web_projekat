@@ -48,4 +48,4 @@ INSERT INTO RECENZIJA (ocena, tekst, datum, korisnik_id, stavka_police_id) VALUE
 INSERT INTO RECENZIJA (ocena, tekst, datum, korisnik_id, stavka_police_id) VALUES (3, 'Interesting story but slow-paced', '2022-01-28', 2, 7);
 
 -- popunjavanje tabele zahteva za aktivaciju naloga autora
-INSERT INTO ZAHTEV_ZA_AKTIVACIJU (mejl, telefon, poruka, datum, status, autor_id) VALUES ('newauthor@example.com', '555-5555', 'I would like to become an author on the platform', '2022-03-20', 'CEKANJE', 2);
+INSERT INTO ZAHTEV_ZA_AKTIVACIJU (mejl, telefon, poruka, datum, status, autor_id) VALUES ('janeduncan@email.com', '555-5555', 'I would like to become an author on the platform', '2022-03-20', 'CEKANJE', 2);

@@ -134,8 +134,13 @@ public class KorisnikRestController {
 
         korisnik.setLozinka(azuriranjeKorisnikaDto.getLozinka());
 
+        for (Korisnik k : korisnikService.findAll())
+            if(k.getMejl().equals(azuriranjeKorisnikaDto.getMejl()))
+                return new ResponseEntity("Ovaj mejl se vec koristi", HttpStatus.BAD_REQUEST);
+
         if(!azuriranjeKorisnikaDto.getMejl().isEmpty())
-            korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
+            if(!korisnik.getLozinka().equals(azuriranjeKorisnikaDto.getStaraLozinka()))
+                korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
 
         korisnikService.save(korisnik);
 

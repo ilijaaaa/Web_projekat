@@ -154,9 +154,6 @@ public class KnjigaRestController {
         if(knjigaDto.getDatum() != null)
             knjiga.setDatum(knjigaDto.getDatum());
 
-        if(!knjigaDto.getOpis().isEmpty())
-            knjiga.setOpis(knjigaDto.getOpis());
-
         if(knjigaDto.getBrStr() != 0)
             knjiga.setBrStr(knjigaDto.getBrStr());
 

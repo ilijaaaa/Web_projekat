@@ -121,7 +121,7 @@ public class PolicaRestController {
     }
 
     @DeleteMapping("/polica/{polica_id}/knjiga/{knjiga_id}")
-    public ResponseEntity<Set<PolicaDto>> deleteKnjiga(@PathVariable(name = "polica_id") Long polica_id, @PathVariable(name = "knjiga_id") Long knjiga_id, HttpSession session){
+    public ResponseEntity<Set<PolicaDto>> izbrisiKnjigu(@PathVariable(name = "polica_id") Long polica_id, @PathVariable(name = "knjiga_id") Long knjiga_id, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if(korisnik == null)
