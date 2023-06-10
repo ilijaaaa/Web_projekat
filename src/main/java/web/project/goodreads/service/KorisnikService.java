@@ -3,9 +3,7 @@ package web.project.goodreads.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.project.goodreads.entity.Korisnik;
-import web.project.goodreads.entity.Polica;
 import web.project.goodreads.repository.KorisnikRepository;
-import web.project.goodreads.repository.PolicaRepository;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,9 +1,9 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Korisnik {
@@ -27,8 +27,6 @@ public class Korisnik {
     @Column
     @Enumerated(EnumType.STRING)
     protected Uloga uloga;
-    //@OneToMany(mappedBy = "korisnik", fetch = FetchType.EAGER)
-    //protected Set<Polica> police = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -107,14 +105,6 @@ public class Korisnik {
     public void setUloga(Uloga uloga) {
         this.uloga = uloga;
     }
-
-    /*public Set<Polica> getPolice() {
-        return police;
-    }*/
-
-    /*public void setPolice(Set<Polica> police) {
-        this.police = police;
-    }*/
 
     @Override
     public String toString() {

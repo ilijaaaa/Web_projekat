@@ -1,7 +1,7 @@
 package web.project.goodreads.dto;
 
-import web.project.goodreads.entity.Autor;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class ZahtevZaAktivacijuDto {
     private String mejl, telefon, poruka;
 

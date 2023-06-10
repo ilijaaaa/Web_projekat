@@ -1,15 +1,15 @@
 package web.project.goodreads.dto;
 
-import java.time.LocalDate;
-
 public class AutorDto {
-    private String ime, prezime;
-    private LocalDate datumRodjenja;
+    private String ime, prezime, slika, opis;
 
-    public AutorDto(String ime, String prezime, LocalDate datumRodjenja) {
+    public AutorDto() {}
+
+    public AutorDto(Long id, String ime, String prezime, String slika, String opis) {
         this.ime = ime;
         this.prezime = prezime;
-        this.datumRodjenja = datumRodjenja;
+        this.slika = slika;
+        this.opis = opis;
     }
 
     public String getIme() {
@@ -28,11 +28,19 @@ public class AutorDto {
         this.prezime = prezime;
     }
 
-    public LocalDate getDatumRodjenja() {
-        return datumRodjenja;
+    public String getSlika() {
+        return slika;
     }
 
-    public void setDatumRodjenja(LocalDate datumRodjenja) {
-        this.datumRodjenja = datumRodjenja;
+    public void setSlika(String slika) {
+        this.slika = slika;
+    }
+
+    public String getOpis() {
+        return opis;
+    }
+
+    public void setOpis(String opis) {
+        this.opis = opis;
     }
 }

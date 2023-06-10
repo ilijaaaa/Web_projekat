@@ -2,18 +2,13 @@ package web.project.goodreads.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
-import web.project.goodreads.dto.ZahtevZaAktivacijuDto;
-import web.project.goodreads.dto.ZanrDto;
-import web.project.goodreads.entity.Korisnik;
-import web.project.goodreads.entity.Zanr;
+import web.project.goodreads.dto.StringDto;
+import web.project.goodreads.entity.*;
 import web.project.goodreads.service.ZanrService;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api")
@@ -22,36 +17,24 @@ public class ZanrRestController {
     private ZanrService zanrService;
 
     @GetMapping("/zanrovi")
-    public ResponseEntity<Set<ZanrDto>> getZanrovi(){
-        List<Zanr> zanrovi = zanrService.findAll();
-        Set<ZanrDto> zanroviDto = new HashSet<>();
-
-        for(Zanr z : zanrovi){
-            ZanrDto zanrDto = new ZanrDto(z.getNaziv());
-            zanroviDto.add(zanrDto);
-        }
-
-        return ResponseEntity.ok(zanroviDto);
+    public ResponseEntity<List<Zanr>> pregledZanrova(){
+        return ResponseEntity.ok(zanrService.findAll());
     }
 
-    @PostMapping("/dodaj-zanr")
-    public ResponseEntity<String> dodajZanr(@RequestBody ZanrDto zanrDto, HttpSession session)
-    {
+    @PostMapping("/zanr")
+    public ResponseEntity<Zanr> dodajZanr(@RequestBody StringDto stringDto, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
 
-        List<Zanr> zanrovi = zanrService.findAll();
+        for(Zanr z : zanrService.findAll())
+            if(stringDto.getValue().equals(z.getNaziv()))
+                return new ResponseEntity("Zanr vec postoji", HttpStatus.BAD_REQUEST);
 
-        for(Zanr z : zanrovi)
-            if(zanrDto.getNaziv().equals(z.getNaziv()))
-                return new ResponseEntity("Ovaj zanr vec postoji", HttpStatus.BAD_REQUEST);
-
-        Zanr zanr = new Zanr(zanrDto.getNaziv());
+        Zanr zanr = new Zanr(stringDto.getValue());
         this.zanrService.save(zanr);
 
-        return ResponseEntity.ok("Uspesno dodat zanr");
+        return ResponseEntity.ok(zanr);
     }
-
 }

@@ -9,7 +9,6 @@ import web.project.goodreads.entity.*;
 import web.project.goodreads.service.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -20,87 +19,21 @@ public class KorisnikRestController {
     @Autowired
     private PolicaService policaService;
     @Autowired
-    private StavkaPoliceService stavkaPoliceService;
-    @Autowired
     private AutorService autorService;
-    @Autowired
-    private ZahtevZaAktivacijuService zahtevZaAktivacijuService;
-
-    @GetMapping("/korisnici")
-    public  List<Korisnik> getKorisinic() { return korisnikService.findAll(); }
 
     @GetMapping("/korisnik/{id}")
-    public ResponseEntity<KorisnikDto> getKorisnik(@PathVariable(name = "id") Long id){
-        Korisnik korisnik = korisnikService.findOne(id);
+    public ResponseEntity<PregledKorisnikaDto> pregledKorisnika(@PathVariable(name = "id") Long id){
+        Korisnik k = korisnikService.findOne(id);
 
-        if(korisnik == null){
+        if(k == null){
             return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
         }
 
-        KorisnikRecenzijaDto korisnikRecenzijaDto = new KorisnikRecenzijaDto(korisnik.getIme(), korisnik.getPrezime(), korisnik.getKorisnickoIme(), korisnik.getProfilnaSlika());
-        List<Polica> police = policaService.findAll(korisnik);
-        Set<PolicaDto> policeDto = new HashSet<>();
-        Set<KnjigaDto> knjigeDto = new HashSet<>();
-
-        for(Polica p : police){
-            List<StavkaPolice> stavkePolice = stavkaPoliceService.findAll(p);
-
-            for(StavkaPolice sp : stavkePolice){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
-
-            PolicaDto policaDto = new PolicaDto(p.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
-        }
-
-        KorisnikDto korisnikDto = new KorisnikDto(korisnikRecenzijaDto, policeDto);
-
-        return ResponseEntity.ok(korisnikDto);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<KorisnikDto> login(@RequestBody LoginDto loginDto, HttpSession session){
-        if(loginDto.getMejl().isEmpty() || loginDto.getLozinka().isEmpty())
-            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
-
-        Korisnik korisnik = korisnikService.login(loginDto.getMejl(), loginDto.getLozinka());
-
-        if (korisnik == null)
-            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
-
-        session.setAttribute("korisnik", korisnik);
-
-        KorisnikRecenzijaDto korisnikRecenzijaDto = new KorisnikRecenzijaDto(korisnik.getIme(), korisnik.getPrezime(), korisnik.getKorisnickoIme(), korisnik.getProfilnaSlika());
-        List<Polica> police = policaService.findAll(korisnik);
-        Set<PolicaDto> policeDto = new HashSet<>();
-        Set<KnjigaDto> knjigeDto = new HashSet<>();
-
-        for(Polica p : police){
-            List<StavkaPolice> stavkePolice = stavkaPoliceService.findAll(p);
-
-            for(StavkaPolice sp : stavkePolice){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
-
-            PolicaDto policaDto = new PolicaDto(p.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
-        }
-
-        KorisnikDto korisnikDto = new KorisnikDto(korisnikRecenzijaDto, policeDto);
-
-        return ResponseEntity.ok(korisnikDto);
+        return ResponseEntity.ok(pregledKorisnikaDto(k));
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<KorisnikDto> signin(@RequestBody SignInDto signInDto){
+    public ResponseEntity<PregledKorisnikaDto> signin(@RequestBody SignInDto signInDto){
         if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
                 || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
             return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
@@ -108,11 +41,12 @@ public class KorisnikRestController {
         if (!signInDto.getLozinka().equals(signInDto.getPonovljenaLozinka()))
             return new ResponseEntity("Lozinke nisu iste", HttpStatus.BAD_REQUEST);
 
-        List<Korisnik> korisnici = korisnikService.findAll();
-
-        for (Korisnik k : korisnici)
+        for (Korisnik k : korisnikService.findAll()){
+            if(signInDto.getKorisnickoIme().equals(k.getKorisnickoIme()))
+                return new ResponseEntity("Korisnicko ime se vec koristi", HttpStatus.BAD_REQUEST);
             if(signInDto.getMejl().equals(k.getMejl()))
                 return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
+        }
 
         Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
         this.korisnikService.save(korisnik);
@@ -124,33 +58,45 @@ public class KorisnikRestController {
         policaService.save(p2);
         policaService.save(p3);
 
-        KorisnikRecenzijaDto korisnikRecenzijaDto = new KorisnikRecenzijaDto(korisnik.getIme(), korisnik.getPrezime(), korisnik.getKorisnickoIme(), korisnik.getProfilnaSlika());
-        List<Polica> police = policaService.findAll(korisnik);
-        Set<PolicaDto> policeDto = new HashSet<>();
-        Set<KnjigaDto> knjigeDto = new HashSet<>();
+        return ResponseEntity.ok(pregledKorisnikaDto(korisnik));
+    }
 
-        for(Polica p : police){
-            List<StavkaPolice> stavkePolice = stavkaPoliceService.findAll(p);
+    @PostMapping("/login")
+    public ResponseEntity<PregledKorisnikaDto> login(@RequestBody SignInDto signInDto, HttpSession session){
+        if(signInDto.getMejl().isEmpty() || signInDto.getLozinka().isEmpty())
+            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
 
-            for(StavkaPolice sp : stavkePolice){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
+        Korisnik korisnik = korisnikService.login(signInDto.getMejl(), signInDto.getLozinka());
 
-            PolicaDto policaDto = new PolicaDto(p.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
+        if (korisnik == null)
+            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
+
+        session.setAttribute("korisnik", korisnik);
+
+        return ResponseEntity.ok(pregledKorisnikaDto(korisnik));
+    }
+
+    private PregledKorisnikaDto pregledKorisnikaDto(Korisnik k){
+        Korisnik korisnik = new Korisnik();
+        korisnik.setId(k.getId());
+        korisnik.setKorisnickoIme(k.getKorisnickoIme());
+        korisnik.setProfilnaSlika(k.getProfilnaSlika());
+        korisnik.setOpis(k.getOpis());
+
+        Set<Polica> police = new HashSet<>();
+
+        for(Polica p : policaService.findAll(k)){
+            Polica polica = new Polica();
+            polica.setId(p.getId());
+            polica.setNaziv(p.getNaziv());
+            police.add(polica);
         }
 
-        KorisnikDto korisnikDto = new KorisnikDto(korisnikRecenzijaDto, policeDto);
-
-        return ResponseEntity.ok(korisnikDto);
+        return new PregledKorisnikaDto(korisnik, police);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity Logout(HttpSession session){
+    public ResponseEntity logout(HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if (korisnik == null)
@@ -161,7 +107,7 @@ public class KorisnikRestController {
     }
 
     @PutMapping("/korisnik")
-    public ResponseEntity izmeniIme(@RequestBody AzuriranjeKorisnikaDto azuriranjeKorisnikaDto, HttpSession session){
+    public ResponseEntity<Korisnik> azurirajProfil(@RequestBody AzuriranjeKorisnikaDto azuriranjeKorisnikaDto, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if (korisnik == null)
@@ -189,90 +135,64 @@ public class KorisnikRestController {
         korisnik.setLozinka(azuriranjeKorisnikaDto.getLozinka());
 
         if(!azuriranjeKorisnikaDto.getMejl().isEmpty())
-            if(!korisnik.getMejl().equals(azuriranjeKorisnikaDto.getStariMejl()))
-                return new ResponseEntity("Mejlovi se ne podudaraju", HttpStatus.BAD_REQUEST);
-
-        korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
+            korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
 
         korisnikService.save(korisnik);
-        return ResponseEntity.ok("Uspesna izmena");
+
+        Korisnik k = new Korisnik();
+        k.setId(korisnik.getId());
+        k.setIme(korisnik.getIme());
+        k.setPrezime(korisnik.getPrezime());
+        k.setProfilnaSlika(korisnik.getProfilnaSlika());
+        k.setOpis(korisnik.getOpis());
+        k.setLozinka(korisnik.getLozinka());
+        k.setMejl(korisnik.getMejl());
+        k.setDatumRodjenja(korisnik.getDatumRodjenja());
+
+        return ResponseEntity.ok(k);
     }
 
-
-
     @PostMapping("/autor")
-    public ResponseEntity<Autor> addAutor(@RequestBody AutorDto autorDto, HttpSession session){
+    public ResponseEntity<Autor> dodajAutora(@RequestBody AutorDto autorDto, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
-        if (korisnik == null)
-            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
-
-        if(korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
+        if (korisnik == null || korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
             return new ResponseEntity("Nemate adminska prava", HttpStatus.FORBIDDEN);
 
         Autor autor = new Autor();
         autor.setUloga(Korisnik.Uloga.AUTOR);
+        autor.setAktivan(false);
         autor.setIme(autorDto.getIme());
         autor.setPrezime(autorDto.getPrezime());
-        autor.setDatumRodjenja(autorDto.getDatumRodjenja());
-        autor.setAktivan(false);
+        autor.setProfilnaSlika(autorDto.getSlika());
+        autor.setOpis(autorDto.getOpis());
         autorService.save(autor);
 
         return ResponseEntity.ok(autor);
     }
 
-    @PutMapping("/odobri/{id}")
-    public ResponseEntity<ZahtevOdgovorDto> odobriZahtev(@PathVariable(name ="id") Long id, HttpSession session){
+    @PutMapping("/autor/{id}")
+    public ResponseEntity<Autor> azurirajAutora(@PathVariable(name="id") Long id, @RequestBody AutorDto autorDto, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
-        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
-            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
+        if (korisnik == null || korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
+            return new ResponseEntity("Nemate adminska prava", HttpStatus.FORBIDDEN);
 
-        ZahtevZaAktivaciju zahtevZaAktivaciju = zahtevZaAktivacijuService.findOne(id);
+        Autor autor = autorService.findOne(id);
 
-        if(zahtevZaAktivaciju == null)
-            return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
+        if(autor == null || autor.getAktivan())
+            return new ResponseEntity("Autor je aktivan/ne postoji", HttpStatus.FORBIDDEN);
 
-        if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
-            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
+        if(!autorDto.getIme().isEmpty())
+            autor.setIme(autorDto.getIme());
+        if(!autorDto.getPrezime().isEmpty())
+            autor.setPrezime(autorDto.getPrezime());
+        if(!autorDto.getSlika().isEmpty())
+            autor.setProfilnaSlika(autorDto.getSlika());
+        if(!autorDto.getOpis().isEmpty())
+            autor.setOpis(autorDto.getOpis());
 
-        zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODOBRENO);
-        zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
-
-        Autor autor = zahtevZaAktivaciju.getAutor();
-        autor.setAktivan(true);
-        this.autorService.save(autor);
-
-        Polica p1 = new Polica("Want to read", true, autor);
-        Polica p2 = new Polica("Currently reading", true, autor);
-        Polica p3 = new Polica("Read", true, autor);
-        policaService.save(p1);
-        policaService.save(p2);
-        policaService.save(p3);
-
-        ZahtevOdgovorDto zahtevOdgovorDto = new ZahtevOdgovorDto(zahtevZaAktivaciju.getMejl(), "Zahtev prihvacen, lozinka: 123456789");
-        return ResponseEntity.ok(zahtevOdgovorDto);
-    }
-
-   @PutMapping("/odbij/{id}")
-    public ResponseEntity<ZahtevOdgovorDto> odbijZahtev(@PathVariable(name ="id") Long id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
-
-        if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
-            return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
-
-        ZahtevZaAktivaciju zahtevZaAktivaciju = zahtevZaAktivacijuService.findOne(id);
-
-        if(zahtevZaAktivaciju == null)
-            return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
-
-        if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
-            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
-
-        zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODBIJENO);
-        zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
-
-        ZahtevOdgovorDto zahtevOdgovorDto = new ZahtevOdgovorDto(zahtevZaAktivaciju.getMejl(), "Zahtev odbijen");
-        return ResponseEntity.ok(zahtevOdgovorDto);
+        autorService.save(autor);
+        return ResponseEntity.ok(autor);
     }
 }

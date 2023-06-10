@@ -2,18 +2,12 @@ package web.project.goodreads.controller;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import web.project.goodreads.dto.*;
-import web.project.goodreads.entity.Knjiga;
-import web.project.goodreads.entity.Korisnik;
-import web.project.goodreads.entity.Polica;
-import web.project.goodreads.entity.StavkaPolice;
-import web.project.goodreads.service.KnjigaService;
-import web.project.goodreads.service.PolicaService;
-import web.project.goodreads.service.StavkaPoliceService;
+import web.project.goodreads.entity.*;
+import web.project.goodreads.service.*;
 
 import java.util.HashSet;
 import java.util.List;
@@ -28,50 +22,31 @@ public class PolicaRestController {
     private StavkaPoliceService stavkaPoliceService;
     @Autowired
     private KnjigaService knjigaService;
-
-    @GetMapping("/police")
-    public ResponseEntity<List<Polica>> getPolice() { return ResponseEntity.ok(policaService.findAll()); }
-
-    /*@GetMapping("/police/{naziv}")
-    public ResponseEntity<List<Polica>> getPoliceKorisnika(@PathVariable(name = "naziv") String naziv) { return ResponseEntity.ok(policaService.findOne(naziv)); }*/
+    @Autowired
+    private RecenzijaService recenzijaService;
 
     @PostMapping("/polica")
-    public ResponseEntity<Set<PolicaDto>> addPolica(@RequestBody StringDto stringDto, HttpSession session){
+    public ResponseEntity<Set<Polica>> dodajPolicu(@RequestBody StringDto stringDto, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if(korisnik == null)
             return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
 
-        for(Polica p : policaService.findAll(korisnik))
+        List<Polica> police = policaService.findAll(korisnik);
+
+        for(Polica p : police)
             if(stringDto.getValue().equals(p.getNaziv()))
                 return new ResponseEntity("Polica vec postoji", HttpStatus.BAD_REQUEST);
 
         Polica polica = new Polica(stringDto.getValue(), false, korisnik);
         policaService.save(polica);
 
-        Set<PolicaDto> policeDto = new HashSet<>();
-
-        for(Polica p : policaService.findAll(korisnik)){
-            Set<KnjigaDto> knjigeDto = new HashSet<>();
-
-            for(StavkaPolice sp : stavkaPoliceService.findAll(p)){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
-
-            PolicaDto policaDto = new PolicaDto(p.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
-        }
-
-        return ResponseEntity.ok(policeDto);
+        return ResponseEntity.ok(police(korisnik));
     }
 
     @Transactional
     @DeleteMapping("/polica/{id}")
-    public ResponseEntity<Set<PolicaDto>> deletePolica(@PathVariable(name = "id") Long id, HttpSession session){
+    public ResponseEntity<Set<Polica>> izbrisiPolicu(@PathVariable(name = "id") Long id, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if(korisnik == null)
@@ -85,28 +60,24 @@ public class PolicaRestController {
 
         policaService.deleteOne(id);
 
-        Set<PolicaDto> policeDto = new HashSet<>();
+        return ResponseEntity.ok(police(korisnik));
+    }
+
+    private Set<Polica> police(Korisnik korisnik){
+        Set<Polica> policas = new HashSet<>();
 
         for(Polica p : policaService.findAll(korisnik)){
-            Set<KnjigaDto> knjigeDto = new HashSet<>();
-
-            for(StavkaPolice sp : stavkaPoliceService.findAll(p)){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
-
-            PolicaDto policaDto = new PolicaDto(p.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
+            Polica t = new Polica();
+            t.setId(p.getId());
+            t.setNaziv(p.getNaziv());
+            policas.add(t);
         }
 
-        return ResponseEntity.ok(policeDto);
+        return policas;
     }
 
     @PostMapping("/polica/{polica_id}/knjiga/{knjiga_id}")
-    public ResponseEntity<Set<PolicaDto>> addKnjiga(@PathVariable(name = "polica_id") Long polica_id, @PathVariable(name = "knjiga_id") Long knjiga_id, HttpSession session){
+    public ResponseEntity<Set<PolicaDto>> dodajKnjiguNaPolicu(@PathVariable(name = "polica_id") Long polica_id, @PathVariable(name = "knjiga_id") Long knjiga_id, HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if(korisnik == null)
@@ -146,24 +117,7 @@ public class PolicaRestController {
         StavkaPolice stavka = new StavkaPolice(p, k);
         stavkaPoliceService.save(stavka);
 
-        Set<PolicaDto> policeDto = new HashSet<>();
-
-        for(Polica polica : policaService.findAll(korisnik)){
-            Set<KnjigaDto> knjigeDto = new HashSet<>();
-
-            for(StavkaPolice sp : stavkaPoliceService.findAll(polica)){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
-            }
-
-            PolicaDto policaDto = new PolicaDto(polica.getNaziv(), knjigeDto);
-            policeDto.add(policaDto);
-        }
-
-        return ResponseEntity.ok(policeDto);
+        return ResponseEntity.ok(policeDto(k, korisnik));
     }
 
     @DeleteMapping("/polica/{polica_id}/knjiga/{knjiga_id}")
@@ -175,7 +129,6 @@ public class PolicaRestController {
 
         Polica p = policaService.findOne(polica_id);
         Knjiga k = knjigaService.findOne(knjiga_id);
-        boolean flag = false;
 
         if(p == null)
             return new ResponseEntity("Polica ne postoji", HttpStatus.NOT_FOUND);
@@ -191,31 +144,46 @@ public class PolicaRestController {
         if(stavka == null)
             return new ResponseEntity("Knjiga ne postoji na trazenoj polici", HttpStatus.NOT_FOUND);
 
+        if(p.getNaziv().equals("Read"))
+            if(stavka.getRecenzija() != null)
+                recenzijaService.delete(stavka.getRecenzija().getId());
+
         stavkaPoliceService.delete(stavka.getId());
 
         if(p.isPrimarno())
             for(Polica polica : policaService.findAll(korisnik))
                 for(StavkaPolice sp : stavkaPoliceService.findAll(polica))
-                    if(sp.getKnjiga().getId().equals(knjiga_id))
+                    if (sp.getKnjiga().getId().equals(knjiga_id))
                         stavkaPoliceService.delete(sp.getId());
 
+        return ResponseEntity.ok(policeDto(k, korisnik));
+    }
+
+    private Set<PolicaDto> policeDto(Knjiga k, Korisnik korisnik){
         Set<PolicaDto> policeDto = new HashSet<>();
 
         for(Polica polica : policaService.findAll(korisnik)){
-            Set<KnjigaDto> knjigeDto = new HashSet<>();
+            Set<Knjiga> knjige = new HashSet<>();
 
             for(StavkaPolice sp : stavkaPoliceService.findAll(polica)){
-                KnjigaDto knjigaDto = new KnjigaDto();
-                knjigaDto.setNaslov(sp.getKnjiga().getNaslov());
-                knjigaDto.setSlika(sp.getKnjiga().getSlika());
-                knjigaDto.setIsbn(sp.getKnjiga().getIsbn());
-                knjigeDto.add(knjigaDto);
+                Autor autor = new Autor();
+                autor.setId(k.getAutor().getId());
+                autor.setIme(k.getAutor().getIme());
+                autor.setPrezime(k.getAutor().getPrezime());
+
+                Knjiga knjiga = new Knjiga();
+                knjiga.setId(sp.getKnjiga().getId());
+                knjiga.setSlika(sp.getKnjiga().getSlika());
+                knjiga.setNaslov(sp.getKnjiga().getNaslov());
+                knjiga.setAutor(autor);
+                knjiga.setOcena(sp.getKnjiga().getOcena());
+                knjige.add(knjiga);
             }
 
-            PolicaDto policaDto = new PolicaDto(polica.getNaziv(), knjigeDto);
+            PolicaDto policaDto = new PolicaDto(polica.getId(), polica.getNaziv(), knjige);
             policeDto.add(policaDto);
         }
 
-        return ResponseEntity.ok(policeDto);
+        return policeDto;
     }
 }

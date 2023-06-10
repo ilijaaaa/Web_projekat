@@ -1,9 +1,5 @@
 package web.project.goodreads.dto;
 
-import web.project.goodreads.entity.Korisnik;
-
-import java.time.LocalDate;
-
 public class SignInDto {
     private String ime, prezime, korisnickoIme, mejl, lozinka, ponovljenaLozinka;
 

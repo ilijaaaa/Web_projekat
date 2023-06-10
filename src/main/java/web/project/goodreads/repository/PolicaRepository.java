@@ -9,5 +9,4 @@ import java.util.List;
 public interface PolicaRepository extends JpaRepository<Polica, Long>{
     List<Polica> findAllByKorisnik(Korisnik korisnik);
     List<Polica> findByPrimarno(boolean primarno);
-
 }

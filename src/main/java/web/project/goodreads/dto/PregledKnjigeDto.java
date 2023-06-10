@@ -1,35 +1,33 @@
 package web.project.goodreads.dto;
 
-import web.project.goodreads.entity.Knjiga;
-import web.project.goodreads.entity.Recenzija;
+import web.project.goodreads.entity.*;
 
-import java.util.List;
 import java.util.Set;
 
 public class PregledKnjigeDto {
-    private KnjigaDto knjigaDto;
-    private Set<RecenzijaDto> recenzijeDto;
+    private Knjiga knjiga;
+    private Set<Recenzija> recenzije;
 
     public PregledKnjigeDto() {}
 
-    public PregledKnjigeDto(KnjigaDto knjigaDto, Set<RecenzijaDto> recenzijeDto) {
-        this.knjigaDto = knjigaDto;
-        this.recenzijeDto = recenzijeDto;
+    public PregledKnjigeDto(Knjiga knjiga, Set<Recenzija> recenzije) {
+        this.knjiga = knjiga;
+        this.recenzije = recenzije;
     }
 
-    public KnjigaDto getKnjigaDto() {
-        return knjigaDto;
+    public Knjiga getKnjiga() {
+        return knjiga;
     }
 
-    public void setKnjigaDto(KnjigaDto knjigaDto) {
-        this.knjigaDto = knjigaDto;
+    public void setKnjiga(Knjiga knjiga) {
+        this.knjiga = knjiga;
     }
 
-    public Set<RecenzijaDto> getRecenzijeDto() {
-        return recenzijeDto;
+    public Set<Recenzija> getRecenzije() {
+        return recenzije;
     }
 
-    public void setRecenzijeDto(Set<RecenzijaDto> recenzijeDto) {
-        this.recenzijeDto = recenzijeDto;
+    public void setRecenzije(Set<Recenzija> recenzije) {
+        this.recenzije = recenzije;
     }
 }

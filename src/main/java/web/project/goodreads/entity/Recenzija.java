@@ -1,7 +1,9 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 public class Recenzija {
     @Id

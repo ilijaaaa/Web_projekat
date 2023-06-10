@@ -3,7 +3,6 @@ package web.project.goodreads.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import web.project.goodreads.entity.Knjiga;
-import web.project.goodreads.entity.Zanr;
 import web.project.goodreads.repository.KnjigaRepository;
 
 import java.util.HashSet;
@@ -22,14 +21,7 @@ public class KnjigaService {
 
     public Knjiga findOne(Long id) { return knjigaRepository.findById(id).orElse(null); }
 
-    /*public Knjiga findOne(String isbn){
-        Optional<Knjiga> knjiga = Optional.ofNullable(knjigaRepository.findByIsbn(isbn));
-        if (knjiga.isPresent())
-            return knjiga.get();
-        return null;
-    }*/
-
     public Knjiga save(Knjiga knjiga) { return knjigaRepository.save(knjiga); }
 
-    public void deleteOne(Knjiga knjiga) { knjigaRepository.delete(knjiga);}
+    public void delete(Long id) { knjigaRepository.deleteById(id); }
 }

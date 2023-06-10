@@ -1,40 +1,26 @@
 package web.project.goodreads.dto;
 
-import web.project.goodreads.entity.Autor;
-import web.project.goodreads.entity.Zanr;
-
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class KnjigaDto {
-
-    private Long id;
-    private String naslov, slika, opis, isbn;
+    private String naslov, slika, opis;
+    private String isbn;
     private LocalDate datum;
-    int brStr;
-    private BigDecimal ocena;
-    private StringDto zanr;
-    private KorisnikRecenzijaDto autor;
+    private int brStr;
+    private String zanr;
+    private Long autor;
 
     public KnjigaDto() {}
 
-    public KnjigaDto(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, StringDto zanr, KorisnikRecenzijaDto autor) {
+    public KnjigaDto(String naslov, String slika, String opis, String isbn, LocalDate datum, int brStr, String zanr, Long autor) {
         this.naslov = naslov;
         this.slika = slika;
         this.opis = opis;
         this.isbn = isbn;
-        this.brStr = brStr;
         this.datum = datum;
+        this.brStr = brStr;
         this.zanr = zanr;
         this.autor = autor;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getNaslov() {
@@ -69,14 +55,6 @@ public class KnjigaDto {
         this.isbn = isbn;
     }
 
-    public int getBrStr() {
-        return brStr;
-    }
-
-    public void setBrStr(int brStr) {
-        this.brStr = brStr;
-    }
-
     public LocalDate getDatum() {
         return datum;
     }
@@ -85,19 +63,27 @@ public class KnjigaDto {
         this.datum = datum;
     }
 
-    public StringDto getZanr() {
+    public int getBrStr() {
+        return brStr;
+    }
+
+    public void setBrStr(int brStr) {
+        this.brStr = brStr;
+    }
+
+    public String getZanr() {
         return zanr;
     }
 
-    public void setZanr(StringDto zanr) {
+    public void setZanr(String zanr) {
         this.zanr = zanr;
     }
 
-    public KorisnikRecenzijaDto getAutor() {
+    public Long getAutor() {
         return autor;
     }
 
-    public void setAutor(KorisnikRecenzijaDto autor) {
+    public void setAutor(Long autor) {
         this.autor = autor;
     }
 }

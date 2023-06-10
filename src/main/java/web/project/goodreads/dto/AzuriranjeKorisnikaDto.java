@@ -3,12 +3,12 @@ package web.project.goodreads.dto;
 import java.time.LocalDate;
 
 public class AzuriranjeKorisnikaDto {
-    private String ime, prezime, profilnaSlika, opis, lozinka, staraLozinka, mejl, stariMejl;
+    private String ime, prezime, profilnaSlika, opis, lozinka, staraLozinka, mejl;
     private LocalDate datumRodjenja;
 
     public AzuriranjeKorisnikaDto() {}
 
-    public AzuriranjeKorisnikaDto(String ime, String prezime, String profilnaSlika, String opis, String lozinka, String staraLozinka, String mejl, String stariMejl, LocalDate datumRodjenja) {
+    public AzuriranjeKorisnikaDto(String ime, String prezime, String profilnaSlika, String opis, String lozinka, String staraLozinka, String mejl, LocalDate datumRodjenja) {
         this.ime = ime;
         this.prezime = prezime;
         this.profilnaSlika = profilnaSlika;
@@ -16,7 +16,6 @@ public class AzuriranjeKorisnikaDto {
         this.lozinka = lozinka;
         this.staraLozinka = staraLozinka;
         this.mejl = mejl;
-        this.stariMejl = stariMejl;
         this.datumRodjenja = datumRodjenja;
     }
 
@@ -74,14 +73,6 @@ public class AzuriranjeKorisnikaDto {
 
     public void setMejl(String mejl) {
         this.mejl = mejl;
-    }
-
-    public String getStariMejl() {
-        return stariMejl;
-    }
-
-    public void setStariMejl(String stariMejl) {
-        this.stariMejl = stariMejl;
     }
 
     public LocalDate getDatumRodjenja() {

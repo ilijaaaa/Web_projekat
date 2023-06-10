@@ -2,7 +2,6 @@ package web.project.goodreads.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import web.project.goodreads.entity.Autor;
 import web.project.goodreads.entity.Zanr;
 import web.project.goodreads.repository.ZanrRepository;
 
@@ -18,14 +17,12 @@ public class ZanrService {
 
     public List<Zanr> findAll() { return zanrRepository.findAll(); }
 
-    public Set<Zanr> findOne(String naziv){
-        Set<Zanr> zanrovi = new HashSet<>();
-
+    public Zanr findOne(String naziv){
         for(Zanr z : zanrRepository.findAll())
-            if(z.getNaziv() == naziv)
-                    zanrovi.add(z);
+            if(z.getNaziv().equals(naziv))
+                    return z;
 
-        return zanrovi;
+        return null;
     }
 
     public Zanr save(Zanr zanr) { return zanrRepository.save(zanr); }

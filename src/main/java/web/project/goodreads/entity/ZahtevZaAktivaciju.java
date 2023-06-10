@@ -1,7 +1,9 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Table(name = "zahtev_za_aktivaciju")
 public class ZahtevZaAktivaciju {
@@ -18,7 +20,7 @@ public class ZahtevZaAktivaciju {
     @OneToOne
     private Autor autor;
 
-    ZahtevZaAktivaciju() {}
+    public ZahtevZaAktivaciju() {}
 
     public ZahtevZaAktivaciju(String mejl, String telefon, String poruka, Autor autor) {
         this.mejl = mejl;

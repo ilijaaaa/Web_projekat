@@ -1,6 +1,8 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Table(name = "stavka_police")
 public class StavkaPolice {

@@ -2,8 +2,7 @@ package web.project.goodreads.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import web.project.goodreads.entity.Polica;
-import web.project.goodreads.entity.ZahtevZaAktivaciju;
+import web.project.goodreads.entity.*;
 import web.project.goodreads.repository.ZahtevZaAktivacijuRepository;
 
 import java.util.List;
@@ -25,6 +24,8 @@ public class ZahtevZaAktivacijuService {
         return zahtevZaAktivacijuRepository.findAllByStatus(status);
     }
 
+    public List<ZahtevZaAktivaciju> findAll(Autor autor) { return zahtevZaAktivacijuRepository.findAllByAutor(autor); }
+
     public ZahtevZaAktivaciju findOne(Long id){
         Optional<ZahtevZaAktivaciju> zahtevZaAktivaciju = zahtevZaAktivacijuRepository.findById(id);
 
@@ -35,5 +36,4 @@ public class ZahtevZaAktivacijuService {
     }
 
     public ZahtevZaAktivaciju save(ZahtevZaAktivaciju zahtev) { return zahtevZaAktivacijuRepository.save(zahtev); }
-
 }

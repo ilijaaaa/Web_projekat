@@ -1,16 +1,13 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 @Table(name = "autor")
 public class Autor extends Korisnik {
     @Column
     private Boolean aktivan;
-
-    /*@OneToMany(mappedBy = "autor", fetch = FetchType.EAGER)
-    private Set<Knjiga> knjige = new HashSet<>();*/
 
     public Autor() {}
 

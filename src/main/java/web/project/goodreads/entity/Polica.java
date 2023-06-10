@@ -1,8 +1,7 @@
 package web.project.goodreads.entity;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
-
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 @Entity
 public class Polica {
     @Id
