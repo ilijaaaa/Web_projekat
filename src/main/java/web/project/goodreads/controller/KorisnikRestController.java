@@ -10,6 +10,7 @@ import web.project.goodreads.service.*;
 
 import java.util.HashSet;
 import java.util.Set;
+
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
@@ -20,6 +21,8 @@ public class KorisnikRestController {
     private PolicaService policaService;
     @Autowired
     private AutorService autorService;
+    @Autowired
+    private StavkaPoliceService stavkaPoliceService;
 
     @GetMapping("/korisnik/{id}")
     public ResponseEntity<PregledKorisnikaDto> pregledKorisnika(@PathVariable(name = "id") Long id){
@@ -32,7 +35,7 @@ public class KorisnikRestController {
         return ResponseEntity.ok(pregledKorisnikaDto(k));
     }
 
-    @PostMapping("/signin")
+    @PostMapping(value="/signin")
     public ResponseEntity<PregledKorisnikaDto> signin(@RequestBody SignInDto signInDto){
         if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
                 || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
@@ -49,6 +52,7 @@ public class KorisnikRestController {
         }
 
         Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
+        korisnik.setProfilnaSlika("https://cdn-icons-png.flaticon.com/512/85/85615.png");
         this.korisnikService.save(korisnik);
 
         Polica p1 = new Polica("Want to read", true, korisnik);
@@ -64,7 +68,7 @@ public class KorisnikRestController {
     @PostMapping("/login")
     public ResponseEntity<PregledKorisnikaDto> login(@RequestBody SignInDto signInDto, HttpSession session){
         if(signInDto.getMejl().isEmpty() || signInDto.getLozinka().isEmpty())
-            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new StringDto("Uneti neispravni podaci"), HttpStatus.BAD_REQUEST);
 
         Korisnik korisnik = korisnikService.login(signInDto.getMejl(), signInDto.getLozinka());
 
@@ -81,14 +85,34 @@ public class KorisnikRestController {
         korisnik.setId(k.getId());
         korisnik.setKorisnickoIme(k.getKorisnickoIme());
         korisnik.setProfilnaSlika(k.getProfilnaSlika());
+        korisnik.setIme(k.getIme());
+        korisnik.setPrezime(k.getPrezime());
         korisnik.setOpis(k.getOpis());
 
-        Set<Polica> police = new HashSet<>();
+        Set<PolicaDto> police = new HashSet<>();
 
         for(Polica p : policaService.findAll(k)){
-            Polica polica = new Polica();
+            PolicaDto polica = new PolicaDto();
             polica.setId(p.getId());
             polica.setNaziv(p.getNaziv());
+            polica.setKnjige(new HashSet<>());
+
+            for(StavkaPolice sp : stavkaPoliceService.findAll(policaService.findOne(p.getId()))){
+                if(sp.getKnjiga() != null){
+                    Autor autor = new Autor();
+                    autor.setIme(sp.getKnjiga().getAutor().getIme());
+                    autor.setPrezime(sp.getKnjiga().getAutor().getPrezime());
+
+                    Knjiga knjiga = new Knjiga();
+                    knjiga.setId(sp.getKnjiga().getId());
+                    knjiga.setNaslov(sp.getKnjiga().getNaslov());
+                    knjiga.setSlika(sp.getKnjiga().getSlika());
+                    knjiga.setAutor(autor);
+
+                    polica.getKnjige().add(knjiga);
+                }
+            }
+
             police.add(polica);
         }
 

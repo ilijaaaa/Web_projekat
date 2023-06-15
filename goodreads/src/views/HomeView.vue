@@ -1,36 +1,39 @@
 <template>
   <div class="container">
     <h1 class="heading">Goodreads</h1>
-    <h2 class="subheading">Sign In</h2>
+    <h2 class="subheading">Registracija</h2>
     <form @submit.prevent="submitSignIn" class="form">
       <div class="form-group">
-        <input type="text" v-model="signInData.ime" placeholder="Ime" required />
+        <input type="text" v-model="signInDto.ime" placeholder="Ime" required />
       </div>
       <div class="form-group">
-        <input type="text" v-model="signInData.prezime" placeholder="Prezime" required />
+        <input type="text" v-model="signInDto.prezime" placeholder="Prezime" required />
       </div>
       <div class="form-group">
-        <input type="text" v-model="signInData.korisnickoIme" placeholder="Korisničko ime" required />
+        <input type="text" v-model="signInDto.korisnickoIme" placeholder="Korisničko ime" required />
       </div>
       <div class="form-group">
-        <input type="email" v-model="signInData.mejl" placeholder="Mejl" required />
+        <input type="email" v-model="signInDto.mejl" placeholder="Mejl" required />
       </div>
       <div class="form-group">
-        <input type="password" v-model="signInData.lozinka" placeholder="Lozinka" required />
+        <input type="password" v-model="signInDto.lozinka" placeholder="Lozinka" required />
       </div>
       <div class="form-group">
-        <input type="password" v-model="signInData.ponovljenaLozinka" placeholder="Ponovljena lozinka" required />
+        <input type="password" v-model="signInDto.ponovljenaLozinka" placeholder="Ponovljena lozinka" required />
       </div>
-      <button type="submit" class="submit-button">Sign In</button>
+      <router-link to="/login" class="router-link">Prijava</router-link><br /><br />
+      <button type="submit" class="submit-button">Registracija</button>
+      <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
   </div>
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   data() {
     return {
-      signInData: {
+      signInDto: {
         ime: '',
         prezime: '',
         korisnickoIme: '',
@@ -38,22 +41,19 @@ export default {
         lozinka: '',
         ponovljenaLozinka: '',
       },
+      errorMessage: '',
     };
   },
   methods: {
     submitSignIn() {
-      fetch('http://localhost:8080/api/signin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.signInData),
-      })
-        .then(response => response.json())
-        .then(data => {
-          console.log(data);
+      axios.post('http://localhost:8080/api/signin', this.signInDto)
+        .then(response => {
+          console.log(response);
+          this.$router.push("/korisnik?id=" + response.data.korisnik.id);
         })
         .catch(error => {
+          if (error.response && error.response.data)
+            this.errorMessage = error.response.data;
           console.error(error);
         });
     },
@@ -61,57 +61,61 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .container {
   max-width: 400px;
   margin: 0 auto;
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  text-align: center;
+  background-color: #f7f7f7;
 }
 
 .heading {
-  text-align: center;
-  font-size: 32px;
-  margin-bottom: 20px;
+  font-size: 38px;
+  margin-bottom: 10px;
 }
 
 .subheading {
-  text-align: center;
-  font-size: 24px;
+  font-size: 20px;
   margin-bottom: 20px;
 }
 
-.form {
-  display: flex;
-  flex-direction: column;
-}
-
 .form-group {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"] {
-  width: 100%;
-  padding: 8px;
+  width: 85%;
+  padding: 10px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
 
+.router-link {
+  color: #007bff;
+}
+
 .submit-button {
-  width: 105%;
-  padding: 8px;
-  background-color: #4caf50;
-  color: white;
-  font-weight: bold;
+  width: 30%;
+  padding: 10px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: #fff;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 .submit-button:hover {
-  background-color: #45a049;
+  background-color: #0056b3;
+}
+
+.error {
+  color: red;
+  margin-top: 10px;
 }
 </style>

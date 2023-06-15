@@ -6,11 +6,11 @@ import java.util.Set;
 
 public class PregledKorisnikaDto {
     private Korisnik korisnik;
-    private Set<Polica> police;
+    private Set<PolicaDto> police;
 
     public  PregledKorisnikaDto() {}
 
-    public PregledKorisnikaDto(Korisnik korisnik, Set<Polica> police) {
+    public PregledKorisnikaDto(Korisnik korisnik, Set<PolicaDto> police) {
         this.korisnik = korisnik;
         this.police = police;
     }
@@ -23,11 +23,11 @@ public class PregledKorisnikaDto {
         this.korisnik = korisnik;
     }
 
-    public Set<Polica> getPolice() {
+    public Set<PolicaDto> getPolice() {
         return police;
     }
 
-    public void setPolice(Set<Polica> police) {
+    public void setPolice(Set<PolicaDto> police) {
         this.police = police;
     }
 }

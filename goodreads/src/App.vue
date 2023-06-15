@@ -1,9 +1,10 @@
 <template>
   <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+    <router-link to="/">Početna</router-link> |
+    <router-link to="/korisnik">Profil</router-link> |
+    <router-link to="/about">O nama</router-link>
   </nav>
-  <router-view/>
+  <router-view />
 </template>
 
 <style>
@@ -25,6 +26,6 @@ nav a {
 }
 
 nav a.router-link-exact-active {
-  color: #42b983;
+  color: #007bff;
 }
 </style>
