@@ -10,7 +10,7 @@ import web.project.goodreads.service.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class ZahtevZaAktivacijuRestController {

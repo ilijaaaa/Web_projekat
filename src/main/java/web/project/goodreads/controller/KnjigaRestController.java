@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class KnjigaRestController {
@@ -73,6 +73,7 @@ public class KnjigaRestController {
 
         Knjiga knjiga = new Knjiga(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), k.getZanr(), autor);
         knjiga.setId(k.getId());
+        knjiga.setOcena(k.getOcena());
 
         Set<Recenzija> recenzije = new HashSet<>();
 

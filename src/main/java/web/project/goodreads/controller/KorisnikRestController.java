@@ -1,6 +1,6 @@
 package web.project.goodreads.controller;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -11,7 +11,7 @@ import web.project.goodreads.service.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class KorisnikRestController {
@@ -32,57 +32,9 @@ public class KorisnikRestController {
             return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
         }
 
-        return ResponseEntity.ok(pregledKorisnikaDto(k));
-    }
-
-    @PostMapping(value="/signin")
-    public ResponseEntity<PregledKorisnikaDto> signin(@RequestBody SignInDto signInDto){
-        if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
-                || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
-            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
-
-        if (!signInDto.getLozinka().equals(signInDto.getPonovljenaLozinka()))
-            return new ResponseEntity("Lozinke nisu iste", HttpStatus.BAD_REQUEST);
-
-        for (Korisnik k : korisnikService.findAll()){
-            if(signInDto.getKorisnickoIme().equals(k.getKorisnickoIme()))
-                return new ResponseEntity("Korisnicko ime se vec koristi", HttpStatus.BAD_REQUEST);
-            if(signInDto.getMejl().equals(k.getMejl()))
-                return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
-        }
-
-        Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
-        korisnik.setProfilnaSlika("https://cdn-icons-png.flaticon.com/512/85/85615.png");
-        this.korisnikService.save(korisnik);
-
-        Polica p1 = new Polica("Want to read", true, korisnik);
-        Polica p2 = new Polica("Currently reading", true, korisnik);
-        Polica p3 = new Polica("Read", true, korisnik);
-        policaService.save(p1);
-        policaService.save(p2);
-        policaService.save(p3);
-
-        return ResponseEntity.ok(pregledKorisnikaDto(korisnik));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<PregledKorisnikaDto> login(@RequestBody SignInDto signInDto, HttpSession session){
-        if(signInDto.getMejl().isEmpty() || signInDto.getLozinka().isEmpty())
-            return new ResponseEntity(new StringDto("Uneti neispravni podaci"), HttpStatus.BAD_REQUEST);
-
-        Korisnik korisnik = korisnikService.login(signInDto.getMejl(), signInDto.getLozinka());
-
-        if (korisnik == null)
-            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
-
-        session.setAttribute("korisnik", korisnik);
-
-        return ResponseEntity.ok(pregledKorisnikaDto(korisnik));
-    }
-
-    private PregledKorisnikaDto pregledKorisnikaDto(Korisnik k){
         Korisnik korisnik = new Korisnik();
         korisnik.setId(k.getId());
+        korisnik.setSessionId(k.getSessionId());
         korisnik.setKorisnickoIme(k.getKorisnickoIme());
         korisnik.setProfilnaSlika(k.getProfilnaSlika());
         korisnik.setIme(k.getIme());
@@ -116,17 +68,77 @@ public class KorisnikRestController {
             police.add(polica);
         }
 
-        return new PregledKorisnikaDto(korisnik, police);
+        return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police));
+    }
+
+    @PostMapping(value="/signin")
+    public ResponseEntity<PregledKorisnikaDto> signin(@RequestBody SignInDto signInDto, HttpSession session){
+        if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
+                || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
+            return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
+
+        if (!signInDto.getLozinka().equals(signInDto.getPonovljenaLozinka()))
+            return new ResponseEntity("Lozinke nisu iste", HttpStatus.BAD_REQUEST);
+
+        for (Korisnik k : korisnikService.findAll()){
+            if(signInDto.getKorisnickoIme().equals(k.getKorisnickoIme()))
+                return new ResponseEntity("Korisnicko ime se vec koristi", HttpStatus.BAD_REQUEST);
+            if(signInDto.getMejl().equals(k.getMejl()))
+                return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
+        }
+
+        Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
+        korisnik.setProfilnaSlika("https://cdn-icons-png.flaticon.com/512/85/85615.png");
+
+        session.setAttribute("korisnik", korisnik);
+
+        korisnik.setSessionId(session.getId());
+        this.korisnikService.save(korisnik);
+
+        Polica p1 = new Polica("Want to read", true, korisnik);
+        Polica p2 = new Polica("Currently reading", true, korisnik);
+        Polica p3 = new Polica("Read", true, korisnik);
+        policaService.save(p1);
+        policaService.save(p2);
+        policaService.save(p3);
+
+        Korisnik k = new Korisnik();
+        k.setId(korisnik.getId());
+        k.setSessionId(korisnik.getSessionId());
+
+        return ResponseEntity.ok(new PregledKorisnikaDto(k, null));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<PregledKorisnikaDto> login(@RequestBody SignInDto signInDto, HttpSession session){
+        if(signInDto.getMejl().isEmpty() || signInDto.getLozinka().isEmpty())
+            return new ResponseEntity(new StringDto("Uneti neispravni podaci"), HttpStatus.BAD_REQUEST);
+
+        Korisnik korisnik = korisnikService.login(signInDto.getMejl(), signInDto.getLozinka());
+
+        if (korisnik == null)
+            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
+
+        session.setAttribute("korisnik", korisnik);
+        korisnik.setSessionId(session.getId());
+        this.korisnikService.save(korisnik);
+
+        Korisnik k = new Korisnik();
+        k.setId(korisnik.getId());
+        k.setSessionId(korisnik.getSessionId());
+
+        return ResponseEntity.ok(new PregledKorisnikaDto(k, null));
     }
 
     @PostMapping("/logout")
     public ResponseEntity logout(HttpSession session){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
-        if (korisnik == null)
-            return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
+        if(korisnik != null){
+            session.invalidate();
+            korisnik.setSessionId(null);
+        }
 
-        session.invalidate();
         return new ResponseEntity("Uspesno odjavljivanje", HttpStatus.OK);
     }
 

@@ -11,6 +11,8 @@ public class Korisnik {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
     @Column
+    protected String sessionId;
+    @Column
     protected String ime, prezime;
     @Column(unique = true, name = "korisnicko_ime")
     protected String korisnickoIme;
@@ -106,10 +108,19 @@ public class Korisnik {
         this.uloga = uloga;
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
     @Override
     public String toString() {
         return "Korisnik{" +
                 "id=" + id +
+                ", sessionId='" + sessionId + '\'' +
                 ", ime='" + ime + '\'' +
                 ", prezime='" + prezime + '\'' +
                 ", korisnickoIme='" + korisnickoIme + '\'' +

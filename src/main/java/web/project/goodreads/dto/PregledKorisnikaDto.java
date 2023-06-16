@@ -1,5 +1,6 @@
 package web.project.goodreads.dto;
 
+import jakarta.servlet.http.HttpSession;
 import web.project.goodreads.entity.*;
 
 import java.util.Set;

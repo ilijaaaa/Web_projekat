@@ -26,7 +26,11 @@ const routes = [
   {
     path: '/korisnik',
     name: 'korisnik',
-    component: KorisnikView
+    component: KorisnikView,
+    beforeEnter: (to, from, next) => {
+      //to.query = { id: parseInt(localStorage.getItem('korisnik')) };
+      next();
+    },
   },
   {
     path: '/knjiga',

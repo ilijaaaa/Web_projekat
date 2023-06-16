@@ -8,7 +8,7 @@ import web.project.goodreads.dto.RecenzijaDto;
 import web.project.goodreads.entity.*;
 import web.project.goodreads.service.*;
 
-@CrossOrigin(origins = "http://localhost:8081")
+@CrossOrigin
 @RestController
 @RequestMapping("/api")
 public class RecenzijaRestController {

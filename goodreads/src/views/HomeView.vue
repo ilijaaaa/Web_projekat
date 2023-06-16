@@ -2,7 +2,7 @@
   <div class="container">
     <h1 class="heading">Goodreads</h1>
     <h2 class="subheading">Registracija</h2>
-    <form @submit.prevent="submitSignIn" class="form">
+    <form @submit.prevent="signin" class="form">
       <div class="form-group">
         <input type="text" v-model="signInDto.ime" placeholder="Ime" required />
       </div>
@@ -45,16 +45,17 @@ export default {
     };
   },
   methods: {
-    submitSignIn() {
+    signin() {
       axios.post('http://localhost:8080/api/signin', this.signInDto)
         .then(response => {
           console.log(response);
+          localStorage.setItem("korisnik", response.data.korisnik.sessionId);
           this.$router.push("/korisnik?id=" + response.data.korisnik.id);
         })
         .catch(error => {
+          console.error(error);
           if (error.response && error.response.data)
             this.errorMessage = error.response.data;
-          console.error(error);
         });
     },
   },
