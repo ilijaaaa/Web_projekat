@@ -17,9 +17,19 @@ public class KnjigaService {
 
     public List<Knjiga> findAll() { return knjigaRepository.findAll(); }
 
-    public Set<Knjiga> findAll(String naslov) { return knjigaRepository.findAllByNaslov(naslov); }
+    public Set<Knjiga> findAll(String naslov) { return knjigaRepository.findAllByNaslovContainingIgnoreCase(naslov); }
 
     public Knjiga findOne(Long id) { return knjigaRepository.findById(id).orElse(null); }
+
+    public Set<Knjiga> findAllByZanr(String naziv) {
+        Set<Knjiga> knjige = new HashSet<>();
+
+        for(Knjiga k : knjigaRepository.findAll())
+            if(k.getZanr().getNaziv().equals(naziv))
+                knjige.add(k);
+
+        return knjige;
+    }
 
     public Knjiga save(Knjiga knjiga) { return knjigaRepository.save(knjiga); }
 

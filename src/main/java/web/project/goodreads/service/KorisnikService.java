@@ -25,6 +25,14 @@ public class KorisnikService {
         return null;
     }
 
+    public Korisnik findBySessionId(String sessionId)
+    {
+        Optional<Korisnik> korisnik = korisnikRepository.findBySessionId(sessionId);
+        if(korisnik.isPresent())
+            return korisnik.get();
+        return null;
+    }
+
     public Korisnik login(String mejl, String lozinka) {
         Korisnik korisnik = korisnikRepository.getByMejl(mejl);
         if(korisnik == null || !korisnik.getLozinka().equals(lozinka))

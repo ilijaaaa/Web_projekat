@@ -13,11 +13,11 @@
       <div>
         <h3>{{ korisnik.ime }} {{ korisnik.prezime }}</h3>
       </div>
-      <div v-if="korisnik.sessionId == this.sessionId">
-        <button @click="logout" class="logout-button">Odjava</button>
-      </div>
       <div v-if="korisnik.opis">
         <h3>Opis: {{ korisnik.opis }}</h3>
+      </div>
+      <div v-if="korisnik.uloga == 'AUTOR'">
+        <button @click="this.$router.push('/zahtev?id=' + this.korisnik.id)" class="zahtev-button">Zahtev za aktivaciju</button>
       </div>
       <div class="bookshelves">
         <h3>Police:</h3>
@@ -53,7 +53,6 @@ export default {
       police: [],
       loading: true,
       error: null,
-      sessionId: '',
     };
   },
   mounted() {
@@ -67,25 +66,13 @@ export default {
           this.korisnik = response.data.korisnik;
           this.police = response.data.police;
           this.loading = false;
-          this.sessionId = localStorage.getItem("korisnik");
         })
         .catch(error => {
           console.error(error);
-          this.error = 'Niste prijavljeni';
+          this.error = 'Korisnik ne postoji';
           this.loading = false;
         });
     },
-    logout() {
-      axios.post('http://localhost:8080/api/logout', this.sessionId)
-        .then(response => {
-          console.log(response.data);
-          localStorage.clear();
-          this.$router.push("/");
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    }
   }
 };
 </script>
@@ -167,6 +154,16 @@ ul {
 .logout-button:hover {
   background-color: #cc0000;
 }
+
+.zahtev-button {
+    background-color: green;
+    font-weight: bold;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
 
 .bookshelves {
   padding-top: 5px;

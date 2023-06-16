@@ -1,8 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import LoginView from '../views/LoginView.vue'
-import KorisnikView from '../views/KorisnikView.vue'
+import ProfilView from '../views/ProfilView.vue'
 import KnjigaView from '../views/KnjigaView.vue'
+import KorisnikView from '../views/KorisnikView.vue'
+import PretragaKnjigeView from '../views/PretragaKnjigeView.vue'
+import ZanrView from '../views/ZanrView.vue'
+import KnjigaZanrView from '../views/KnjigaZanrView.vue'
+import ZahtevView from '../views/ZahtevView.vue'
 
 const routes = [
   {
@@ -24,19 +29,44 @@ const routes = [
     component: LoginView
   },
   {
-    path: '/korisnik',
-    name: 'korisnik',
-    component: KorisnikView,
+    path: '/profil',
+    name: 'profil',
+    component: ProfilView,
     beforeEnter: (to, from, next) => {
-      //to.query = { id: parseInt(localStorage.getItem('korisnik')) };
+      to.query = { sessionId: localStorage.getItem('korisnik') };
       next();
-    },
+    }
   },
   {
     path: '/knjiga',
     name: 'knjiga',
     component: KnjigaView
   },
+  {
+    path: '/korisnik',
+    name: 'korisnik',
+    component: KorisnikView
+  },
+  {
+    path: '/pretragaKnjige',
+    name: 'pretragaKnjige',
+    component: PretragaKnjigeView
+  },
+  {
+    path: '/zanrovi',
+    name: 'zanrovi',
+    component: ZanrView
+  },
+  {
+    path: '/knjigeZanr',
+    name: 'knjigeZanr',
+    component: KnjigaZanrView
+  },
+  {
+    path: '/zahtev',
+    name: 'zahtev',
+    component: ZahtevView
+  }
 ]
 
 const router = createRouter({

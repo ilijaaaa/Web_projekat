@@ -1,11 +1,13 @@
 <template>
-    <div class="book-details">
+    <div v-if="loading" class="loading">Učitavanje...</div>
+    <div v-else-if="error" class="error">{{ error }}</div>
+    <div v-else class="book-details">
         <div class="book-image-info">
             <img class="book-image" :src="knjiga.slika" :alt="knjiga.naslov" :title="knjiga.naslov" />
             <div class="book-info">
                 <h2 class="book-title">{{ knjiga.naslov }}</h2>
                 <h2 class="author-name">{{ autor.ime }} {{ autor.prezime }}</h2>
-                <vue-star-rating :rating="knjiga.ocena" increment="0.01" read-only fixed-points="2"></vue-star-rating>
+                <vue-star-rating :rating="knjiga.ocena" :increment=0.01 read-only :fixed-points=2></vue-star-rating>
                 <h3 class="book-description">{{ knjiga.opis }}</h3>
                 <h3 class="book-genre">{{ zanr.naziv }}</h3>
                 <h4 class="book-pages">Broj strana: {{ knjiga.brStr }}</h4>
@@ -48,6 +50,8 @@ export default {
             autor: {},
             zanr: {},
             recenzije: [],
+            loading: true,
+            error: null,
         };
     },
     mounted() {
@@ -62,9 +66,12 @@ export default {
                     this.autor = response.data.knjiga.autor;
                     this.zanr = response.data.knjiga.zanr;
                     this.recenzije = response.data.recenzije;
+                    this.loading = false;
                 })
                 .catch(error => {
                     console.error(error);
+                    this.error = 'Knjiga ne postoji';
+                    this.loading = false;
                 });
         }
     }
@@ -72,6 +79,16 @@ export default {
 </script>
 
 <style scoped>
+.loading {
+  font-size: 20px;
+  color: #888;
+}
+
+.error {
+  font-size: 20px;
+  color: #f00;
+}
+
 ul {
     list-style-type: none;
 }
@@ -83,6 +100,7 @@ ul {
 }
 
 .book-image-info {
+    background-color: #f7f7f7;
     display: flex;
     align-items: flex-start;
 }
@@ -94,10 +112,11 @@ ul {
 }
 
 .book-info {
-    display: flex; /* Use flexbox */
+    padding-right: 20px;
+    display: flex;
     flex-direction: column;
-    align-items: center; /* Center horizontally */
-    justify-content: center; /* Center vertically */
+    align-items: center;
+    justify-content: center;
     text-align: center;
 }
 
@@ -178,6 +197,7 @@ ul {
 }
 
 .reviews-list {
+    background-color: #f9f9f9;
     list-style-type: none;
     padding: 0;
     margin: 0;

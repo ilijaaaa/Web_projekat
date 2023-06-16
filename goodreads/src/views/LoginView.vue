@@ -34,9 +34,9 @@ export default {
       };
       axios.post('http://localhost:8080/api/login', signInDto)
         .then(response => {
-          console.log(response.data);
-          localStorage.setItem("korisnik", response.data.korisnik.sessionId);
-          this.$router.push("/korisnik?id=" + response.data.korisnik.id);
+          console.log(response);
+          localStorage.setItem("korisnik", response.data);
+          this.$router.push("/profil");
         })
         .catch(error => {
           console.error(error);

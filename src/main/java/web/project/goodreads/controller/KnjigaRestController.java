@@ -98,6 +98,42 @@ public class KnjigaRestController {
         return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije));
     }
 
+    @GetMapping("/knjige/zanr/{naziv}")
+    public ResponseEntity<Set<Knjiga>> pretragaKnjigeZanr(@PathVariable(name = "naziv") String naziv){
+
+        Zanr zanr = zanrService.findOne(naziv);
+        if (zanr == null) {
+            return new ResponseEntity("Zanr sa datim nazivom ne postoji", HttpStatus.NOT_FOUND);
+        }
+
+        Set<Knjiga> knjige = knjigaService.findAllByZanr(naziv);
+
+        if(knjige.isEmpty()){
+            return new ResponseEntity("Knjige tog zanra ne postoje", HttpStatus.NOT_FOUND);
+        }
+
+        Set<Knjiga> knjigas = new HashSet<>();
+
+        for(Knjiga k : knjige){
+            Autor autor = new Autor();
+            autor.setId(k.getAutor().getId());
+            autor.setIme(k.getAutor().getIme());
+            autor.setPrezime(k.getAutor().getPrezime());
+
+            Knjiga knjiga = new Knjiga();
+            knjiga.setId(k.getId());
+            knjiga.setNaslov(k.getNaslov());
+            knjiga.setAutor(autor);
+            knjiga.setSlika(k.getSlika());
+            knjiga.setOcena(k.getOcena());
+            knjiga.setDatum(k.getDatum());
+
+            knjigas.add(knjiga);
+        }
+
+        return ResponseEntity.ok(knjigas);
+    }
+
     @PostMapping("/knjiga")
     public ResponseEntity<Knjiga> dodajKnjigu(@RequestBody KnjigaDto knjigaDto, HttpSession session) {
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");

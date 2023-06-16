@@ -5,5 +5,5 @@ import web.project.goodreads.entity.Knjiga;
 import java.util.Set;
 
 public interface KnjigaRepository extends JpaRepository<Knjiga, Long>{
-    Set<Knjiga> findAllByNaslov(String naslov);
+    Set<Knjiga> findAllByNaslovContainingIgnoreCase(String naslov);
 }

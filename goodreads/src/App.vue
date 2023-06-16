@@ -1,7 +1,9 @@
 <template>
   <nav>
     <router-link to="/">Početna</router-link> |
-    <router-link to="/korisnik">Profil</router-link> |
+    <router-link to="/pretragaKnjige">Knjige</router-link> |
+    <router-link to="/zanrovi">Žanrovi</router-link> |
+    <router-link to="/profil">Profil</router-link> |
     <router-link to="/about">O nama</router-link>
   </nav>
   <router-view />

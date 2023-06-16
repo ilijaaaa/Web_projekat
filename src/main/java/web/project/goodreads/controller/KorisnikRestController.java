@@ -40,6 +40,54 @@ public class KorisnikRestController {
         korisnik.setIme(k.getIme());
         korisnik.setPrezime(k.getPrezime());
         korisnik.setOpis(k.getOpis());
+        korisnik.setUloga(k.getUloga());
+
+        Set<PolicaDto> police = new HashSet<>();
+
+        for(Polica p : policaService.findAll(k)){
+            PolicaDto polica = new PolicaDto();
+            polica.setId(p.getId());
+            polica.setNaziv(p.getNaziv());
+            polica.setKnjige(new HashSet<>());
+
+            for(StavkaPolice sp : stavkaPoliceService.findAll(policaService.findOne(p.getId()))){
+                if(sp.getKnjiga() != null){
+                    Autor autor = new Autor();
+                    autor.setIme(sp.getKnjiga().getAutor().getIme());
+                    autor.setPrezime(sp.getKnjiga().getAutor().getPrezime());
+
+                    Knjiga knjiga = new Knjiga();
+                    knjiga.setId(sp.getKnjiga().getId());
+                    knjiga.setNaslov(sp.getKnjiga().getNaslov());
+                    knjiga.setSlika(sp.getKnjiga().getSlika());
+                    knjiga.setAutor(autor);
+
+                    polica.getKnjige().add(knjiga);
+                }
+            }
+
+            police.add(polica);
+        }
+
+        return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police));
+    }
+
+    @GetMapping("/profil/{sessionId}")
+    public ResponseEntity<PregledKorisnikaDto> pregledKorisnika(@PathVariable(name = "sessionId") String sessionId){
+        Korisnik k = korisnikService.findBySessionId(sessionId);
+
+        if(k == null){
+            return new ResponseEntity("Korisnik ne postoji", HttpStatus.NOT_FOUND);
+        }
+
+        Korisnik korisnik = new Korisnik();
+        korisnik.setId(k.getId());
+        korisnik.setSessionId(k.getSessionId());
+        korisnik.setKorisnickoIme(k.getKorisnickoIme());
+        korisnik.setProfilnaSlika(k.getProfilnaSlika());
+        korisnik.setIme(k.getIme());
+        korisnik.setPrezime(k.getPrezime());
+        korisnik.setOpis(k.getOpis());
 
         Set<PolicaDto> police = new HashSet<>();
 
@@ -72,7 +120,7 @@ public class KorisnikRestController {
     }
 
     @PostMapping(value="/signin")
-    public ResponseEntity<PregledKorisnikaDto> signin(@RequestBody SignInDto signInDto, HttpSession session){
+    public ResponseEntity<String> signin(@RequestBody SignInDto signInDto, HttpSession session){
         if(signInDto.getIme().isEmpty() || signInDto.getPrezime().isEmpty() || signInDto.getKorisnickoIme().isEmpty() || signInDto.getMejl().isEmpty()
                 || signInDto.getLozinka().isEmpty() || signInDto.getPonovljenaLozinka().isEmpty())
             return new ResponseEntity("Uneti neispravni podaci", HttpStatus.BAD_REQUEST);
@@ -102,15 +150,11 @@ public class KorisnikRestController {
         policaService.save(p2);
         policaService.save(p3);
 
-        Korisnik k = new Korisnik();
-        k.setId(korisnik.getId());
-        k.setSessionId(korisnik.getSessionId());
-
-        return ResponseEntity.ok(new PregledKorisnikaDto(k, null));
+        return ResponseEntity.ok(session.getId());
     }
 
     @PostMapping("/login")
-    public ResponseEntity<PregledKorisnikaDto> login(@RequestBody SignInDto signInDto, HttpSession session){
+    public ResponseEntity<String> login(@RequestBody SignInDto signInDto, HttpSession session){
         if(signInDto.getMejl().isEmpty() || signInDto.getLozinka().isEmpty())
             return new ResponseEntity(new StringDto("Uneti neispravni podaci"), HttpStatus.BAD_REQUEST);
 
@@ -123,21 +167,19 @@ public class KorisnikRestController {
         korisnik.setSessionId(session.getId());
         this.korisnikService.save(korisnik);
 
-        Korisnik k = new Korisnik();
-        k.setId(korisnik.getId());
-        k.setSessionId(korisnik.getSessionId());
-
-        return ResponseEntity.ok(new PregledKorisnikaDto(k, null));
+        return ResponseEntity.ok(session.getId());
     }
 
     @PostMapping("/logout")
-    public ResponseEntity logout(HttpSession session){
+    public ResponseEntity logout(HttpSession session, String sessionId){
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
-        if(korisnik != null){
-            session.invalidate();
-            korisnik.setSessionId(null);
-        }
+        if(korisnik != null)
+            for(Korisnik k : korisnikService.findAll())
+                if(k.getSessionId().equals(sessionId)){
+                    session.invalidate();
+                    korisnik.setSessionId(null);
+                }
 
         return new ResponseEntity("Uspesno odjavljivanje", HttpStatus.OK);
     }
