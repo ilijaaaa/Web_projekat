@@ -7,6 +7,7 @@ import java.util.Set;
 public class PolicaDto {
     private Long id;
     private String naziv;
+    private Boolean primarno;
     private Set<Knjiga> knjige;
 
     public PolicaDto() {}
@@ -39,5 +40,13 @@ public class PolicaDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Boolean getPrimarno() {
+        return primarno;
+    }
+
+    public void setPrimarno(Boolean primarno) {
+        this.primarno = primarno;
     }
 }

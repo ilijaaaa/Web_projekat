@@ -21,6 +21,9 @@
                 <h3 class="author-description">Opis: {{ autor.opis }}</h3>
             </div>
         </div>
+        <div v-if="sessionId">
+            <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj knjigu</button>
+        </div>
         <h2 class="reviews-title">Recenzije:</h2>
         <ul class="reviews-list">
             <li v-for="recenzija in recenzije" :key="recenzija.id" class="review-item">
@@ -52,6 +55,7 @@ export default {
             recenzije: [],
             loading: true,
             error: null,
+            sessionId: '',
         };
     },
     mounted() {
@@ -66,6 +70,7 @@ export default {
                     this.autor = response.data.knjiga.autor;
                     this.zanr = response.data.knjiga.zanr;
                     this.recenzije = response.data.recenzije;
+                    this.sessionId = localStorage.getItem("korisnik");
                     this.loading = false;
                 })
                 .catch(error => {
@@ -80,13 +85,13 @@ export default {
 
 <style scoped>
 .loading {
-  font-size: 20px;
-  color: #888;
+    font-size: 20px;
+    color: #888;
 }
 
 .error {
-  font-size: 20px;
-  color: #f00;
+    font-size: 20px;
+    color: #f00;
 }
 
 ul {
@@ -186,6 +191,21 @@ ul {
 .author-description {
     font-size: 16px;
     margin-bottom: 10px;
+}
+
+.dodaj-knjigu-button {
+    margin-top: 20px;
+    background-color: green;
+    font-weight: bold;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.dodaj-knjigu-button:hover {
+    background-color: darkgreen;
 }
 
 .reviews-title {

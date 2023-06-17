@@ -17,7 +17,8 @@
         <h3>Opis: {{ korisnik.opis }}</h3>
       </div>
       <div v-if="korisnik.uloga == 'AUTOR'">
-        <button @click="this.$router.push('/zahtev?id=' + this.korisnik.id)" class="zahtev-button">Zahtev za aktivaciju</button>
+        <button @click="this.$router.push('/zahtev?id=' + this.korisnik.id)" class="zahtev-button">Zahtev za
+          aktivaciju</button>
       </div>
       <div class="bookshelves">
         <h3>Police:</h3>
@@ -156,14 +157,14 @@ ul {
 }
 
 .zahtev-button {
-    background-color: green;
-    font-weight: bold;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+  background-color: green;
+  font-weight: bold;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
 
 .bookshelves {
   padding-top: 5px;

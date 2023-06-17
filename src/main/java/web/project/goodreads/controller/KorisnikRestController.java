@@ -94,6 +94,7 @@ public class KorisnikRestController {
         for(Polica p : policaService.findAll(k)){
             PolicaDto polica = new PolicaDto();
             polica.setId(p.getId());
+            polica.setPrimarno(p.isPrimarno());
             polica.setNaziv(p.getNaziv());
             polica.setKnjige(new HashSet<>());
 

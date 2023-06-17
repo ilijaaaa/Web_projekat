@@ -10,7 +10,6 @@ public class Korisnik {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Long id;
-    @Column
     protected String sessionId;
     @Column
     protected String ime, prezime;
