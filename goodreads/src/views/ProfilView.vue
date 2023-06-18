@@ -7,7 +7,9 @@
         <h2>{{ korisnik.korisnickoIme }}</h2>
       </div>
       <div class="profile-picture">
-        <img :src="korisnik.profilnaSlika" alt="Korisnička slika" />
+        <a :href="'/azuriranjeProfila?sessionId=' + this.$route.query.sessionId">
+          <img :src="korisnik.profilnaSlika" alt="Korisnička slika" />
+        </a>
         <div class="overlay"></div>
       </div>
       <div>
@@ -24,7 +26,8 @@
         <div v-if="errorDodavanjePolice" class="error" style="margin-top: 5px;">{{ errorDodavanjePolice }}</div>
         <input type="text" v-model="novaPolica" placeholder="Naziv" @keydown.enter="dodajPolicu" />
         <button @click="dodajPolicu" class="dodaj-policu-button">Dodaj</button>
-        <div v-if="this.$route.fullPath.substring(this.$route.fullPath.length - 11, this.$route.fullPath.length - 2) == 'knjiga_id'">
+        <div
+          v-if="this.$route.fullPath.substring(this.$route.fullPath.length - 11, this.$route.fullPath.length - 2) == 'knjiga_id'">
           <button @click="this.$router.push('/knjiga?id=' + this.$route.fullPath.charAt(this.$route.fullPath.length - 1))"
             class="logout-button" style="margin-top: 10px;">Odustani</button>
         </div>
@@ -33,11 +36,13 @@
             <div class="bookshelf-title">
               <div style="display: flex; align-items: center; justify-content: center;">
                 <h4 style="color: #007bff">{{ polica.naziv }}</h4>
-                <button v-if="polica.primarno == false" @click="ukloniPolicu(polica.id)" class="logout-button" style="margin-left: 10px;">Izbriši</button>
+                <button v-if="polica.primarno == false" @click="ukloniPolicu(polica.id)" class="logout-button"
+                  style="margin-left: 10px;">Izbriši</button>
               </div>
               <div
                 v-if="this.$route.fullPath.substring(this.$route.fullPath.length - 11, this.$route.fullPath.length - 2) == 'knjiga_id'">
-                <button class="dodaj-knjigu-button" @click="dodajKnjiguNaPolicu(polica.id)">Dodaj ovde</button>
+                <button class="dodaj-knjigu-button"
+                  @click="dodajKnjiguNaPolicu(polica.id, polica.naziv, this.$route.fullPath.charAt(this.$route.fullPath.length - 1))">Dodaj ovde</button>
               </div>
             </div>
             <ul class="book-list">
@@ -103,21 +108,21 @@ export default {
     },
     dodajPolicu() {
       axios
-      .post('http://localhost:8080/api/polica', { value: this.novaPolica }, {
-        params: {
-          sessionId: this.$route.query.sessionId
-        }
-      })
-      .then(response => {
-        console.log(response.data);
-        this.novaPolica = '';
-        this.police.push(response.data);
-        this.$router.go();
-      })
-      .catch(error => {
-        console.error(error);
-        this.errorDodavanjePolice = error.response.data;
-      });
+        .post('http://localhost:8080/api/polica', { value: this.novaPolica }, {
+          params: {
+            sessionId: this.$route.query.sessionId
+          }
+        })
+        .then(response => {
+          console.log(response.data);
+          this.novaPolica = '';
+          this.police.push(response.data);
+          this.$router.go();
+        })
+        .catch(error => {
+          console.error(error);
+          this.errorDodavanjePolice = error.response.data;
+        });
     },
     ukloniPolicu(id) {
       axios.delete('http://localhost:8080/api/polica/' + id + '/' + this.$route.query.sessionId)
@@ -129,11 +134,14 @@ export default {
           console.error(error);
         });
     },
-    dodajKnjiguNaPolicu(polica_id) {
+    dodajKnjiguNaPolicu(polica_id, naziv, knjiga_id) {
       axios.post('http://localhost:8080/api/polica/' + polica_id + '/knjiga/' + this.$route.fullPath.charAt(this.$route.fullPath.length - 1), null, { params: { sessionId: this.$route.query.sessionId } })
         .then(response => {
           console.log(response.data);
-          this.$router.push('/knjiga?id=' + this.$route.fullPath.charAt(this.$route.fullPath.length - 1));
+          if (naziv == 'Read')
+            this.$router.push('/recenzija?knjiga_id=' + knjiga_id);
+          else
+            this.$router.go(-1);
         })
         .catch(error => {
           console.error(error);
@@ -213,17 +221,6 @@ ul {
   transition: opacity 0.3s ease-in-out;
 }
 
-.profile-picture .overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  opacity: 0;
-  transition: opacity 0.3s ease-in-out;
-}
-
 .profile-picture:hover img {
   opacity: 0.7;
 }
@@ -240,7 +237,7 @@ ul {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  
+
 }
 
 .logout-button:hover {
@@ -277,7 +274,7 @@ ul {
 }
 
 .dodaj-knjigu-button:hover {
-    background-color: darkgreen;
+  background-color: darkgreen;
 }
 
 .book-list {

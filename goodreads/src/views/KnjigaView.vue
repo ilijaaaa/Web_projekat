@@ -34,6 +34,9 @@
                 <vue-star-rating :rating="recenzija.ocena" :show-rating="false" read-only></vue-star-rating>
                 <p class="review-text">{{ recenzija.tekst }}</p>
                 <p class="review-date">{{ recenzija.datum }}</p>
+                <div v-if="recenzija.korisnik.sessionId == this.sessionId">
+                    <button class="dodaj-knjigu-button" @click="this.$router.push({path: 'izmenaRecenzije', query: {id: recenzija.id, knjiga_id: knjiga.id}})" style="margin-left: 10px; margin-bottom: 25px;">Izmeni</button>
+                </div>
             </li>
         </ul>
     </div>
@@ -194,7 +197,7 @@ ul {
 }
 
 .dodaj-knjigu-button {
-    margin-top: 20px;
+    margin-top: 30px;
     background-color: green;
     font-weight: bold;
     color: #fff;

@@ -97,6 +97,10 @@ textarea:focus {
     transition: background-color 0.3s;
 }
 
+.submit-button:hover{
+    background-color: darkblue;
+}
+
 .error {
   color: red;
   margin-top: 10px;

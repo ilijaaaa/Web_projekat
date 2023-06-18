@@ -8,6 +8,9 @@ import PretragaKnjigeView from '../views/PretragaKnjigeView.vue'
 import ZanrView from '../views/ZanrView.vue'
 import KnjigaZanrView from '../views/KnjigaZanrView.vue'
 import ZahtevView from '../views/ZahtevView.vue'
+import RecenzijaView from '../views/RecenzijaView.vue'
+import IzmenaRecenzijeView from '../views/IzmenaRecenzijeView.vue'
+import AzuriranjeProfilaView from '../views/AzuriranjeProfilaView.vue'
 
 const routes = [
   {
@@ -66,7 +69,22 @@ const routes = [
     path: '/zahtev',
     name: 'zahtev',
     component: ZahtevView
-  }
+  },
+  {
+    path: '/recenzija',
+    name: 'recenzija',
+    component: RecenzijaView
+  },
+  {
+    path: '/izmenaRecenzije',
+    name: 'izmenaRecenzije',
+    component: IzmenaRecenzijeView
+  },
+  {
+    path: '/azuriranjeProfila',
+    name: 'azuriranjeProfila',
+    component: AzuriranjeProfilaView
+  },
 ]
 
 const router = createRouter({

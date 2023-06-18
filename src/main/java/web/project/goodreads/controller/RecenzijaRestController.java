@@ -8,6 +8,10 @@ import web.project.goodreads.dto.RecenzijaDto;
 import web.project.goodreads.entity.*;
 import web.project.goodreads.service.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api")
@@ -20,10 +24,12 @@ public class RecenzijaRestController {
     private StavkaPoliceService stavkaPoliceService;
     @Autowired
     private PolicaService policaService;
+    @Autowired
+    private KorisnikService korisnikService;
 
     @PostMapping("/recenzija/{knjiga_id}")
-    public ResponseEntity<Recenzija> recenzija(@RequestBody RecenzijaDto recenzijaDto, @PathVariable(name = "knjiga_id") Long knjiga_id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<String> recenzija(@RequestBody RecenzijaDto recenzijaDto, @PathVariable(name = "knjiga_id") Long knjiga_id, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if(korisnik == null)
             return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
@@ -45,15 +51,26 @@ public class RecenzijaRestController {
         if(stavka.getRecenzija() != null)
             return new ResponseEntity("Knjiga vec ima recenziju", HttpStatus.FORBIDDEN);
 
-        Recenzija recenzija = new Recenzija(recenzijaDto.getOcena(), recenzijaDto.getTekst(), recenzijaDto.getDatum(), korisnik, stavka);
+        float suma = 0;
+        int br = 0;
+
+        for(StavkaPolice sp : stavkaPoliceService.findAll(knjigaService.findOne(knjiga_id)))
+            if(sp.getRecenzija() != null){
+                suma += sp.getRecenzija().getOcena();
+                br++;
+            }
+
+        knjigaService.findOne(knjiga_id).setOcena(new BigDecimal(suma/br));
+
+        Recenzija recenzija = new Recenzija(recenzijaDto.getOcena(), recenzijaDto.getTekst(), LocalDate.parse(recenzijaDto.getDatum(), DateTimeFormatter.ISO_DATE), korisnik, stavka);
         recenzijaService.save(recenzija);
 
-        return ResponseEntity.ok(recenzija(recenzija));
+        return ResponseEntity.ok("Recenzija uspesno dodata");
     }
 
-    @PutMapping("/recenzija/{recenzija_id}")
-    public ResponseEntity<Recenzija> azuriranjeRecenzije(@RequestBody RecenzijaDto recenzijaDto, @PathVariable(name = "recenzija_id") Long recenzija_id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    @PutMapping("/recenzija/{recenzija_id}/knjiga/{knjiga_id}")
+    public ResponseEntity<String> azuriranjeRecenzije(@RequestBody RecenzijaDto recenzijaDto, @PathVariable(name = "recenzija_id") Long recenzija_id, @PathVariable(name = "knjiga_id") Long knjiga_id, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if(korisnik == null)
             return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
@@ -70,20 +87,35 @@ public class RecenzijaRestController {
             recenzija.setTekst(recenzijaDto.getTekst());
 
         if(recenzijaDto.getDatum() != null)
-            recenzija.setDatum(recenzijaDto.getDatum());
+            recenzija.setDatum(LocalDate.parse(recenzijaDto.getDatum(), DateTimeFormatter.ISO_DATE));
+
+        float suma = 0;
+        int br = 0;
+
+        for(StavkaPolice sp : stavkaPoliceService.findAll(knjigaService.findOne(knjiga_id)))
+            if(sp.getRecenzija() != null){
+                suma += sp.getRecenzija().getOcena();
+                br++;
+            }
+
+        knjigaService.findOne(knjiga_id).setOcena(new BigDecimal(suma/br));
 
         recenzijaService.save(recenzija);
 
-        return ResponseEntity.ok(recenzija(recenzija));
+        return ResponseEntity.ok("Recenzija uspesno izmenjena");
     }
 
-    private Recenzija recenzija(Recenzija r){
-        Recenzija t = new Recenzija();
-        t.setId(r.getId());
-        t.setOcena(r.getOcena());
-        t.setTekst(r.getTekst());
-        t.setDatum(r.getDatum());
+    @GetMapping("/recenzija/{id}")
+    public ResponseEntity<Recenzija> getRecenzija(@PathVariable(name = "id") Long id){
+        Recenzija r = recenzijaService.findOne(id);
 
-        return t;
+        if(r == null)
+            return new ResponseEntity("Recenzija ne postoji", HttpStatus.NOT_FOUND);
+
+        Recenzija recenzija = new Recenzija();
+        recenzija.setOcena(r.getOcena());
+        recenzija.setTekst(r.getTekst());
+
+        return ResponseEntity.ok(recenzija);
     }
 }

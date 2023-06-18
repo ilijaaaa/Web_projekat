@@ -81,6 +81,7 @@ public class KnjigaRestController {
             if(sp.getRecenzija() != null){
                 Korisnik korisnik = new Korisnik();
                 korisnik.setId(sp.getRecenzija().getKorisnik().getId());
+                korisnik.setSessionId(sp.getRecenzija().getKorisnik().getSessionId());
                 korisnik.setProfilnaSlika(sp.getRecenzija().getKorisnik().getProfilnaSlika());
                 korisnik.setKorisnickoIme(sp.getRecenzija().getKorisnik().getKorisnickoIme());
 

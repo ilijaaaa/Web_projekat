@@ -5,10 +5,10 @@ import java.time.LocalDate;
 public class RecenzijaDto {
     private int ocena;
     private String tekst;
-    private LocalDate datum;
+    private CharSequence datum;
     public RecenzijaDto() {}
 
-    public RecenzijaDto(int ocena, String tekst, LocalDate datum) {
+    public RecenzijaDto(int ocena, String tekst, CharSequence datum) {
         this.ocena = ocena;
         this.tekst = tekst;
         this.datum = datum;
@@ -30,11 +30,11 @@ public class RecenzijaDto {
         this.tekst = tekst;
     }
 
-    public LocalDate getDatum() {
+    public CharSequence getDatum() {
         return datum;
     }
 
-    public void setDatum(LocalDate datum) {
+    public void setDatum(CharSequence datum) {
         this.datum = datum;
     }
 }

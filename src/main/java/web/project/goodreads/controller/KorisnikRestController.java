@@ -186,54 +186,46 @@ public class KorisnikRestController {
     }
 
     @PutMapping("/korisnik")
-    public ResponseEntity<Korisnik> azurirajProfil(@RequestBody AzuriranjeKorisnikaDto azuriranjeKorisnikaDto, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<String> azurirajProfil(@RequestBody AzuriranjeKorisnikaDto azuriranjeKorisnikaDto, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if (korisnik == null)
             return new ResponseEntity("Niste prijavljeni", HttpStatus.FORBIDDEN);
 
-        if(!azuriranjeKorisnikaDto.getIme().isEmpty())
+        if(azuriranjeKorisnikaDto.getIme() != null)
             korisnik.setIme(azuriranjeKorisnikaDto.getIme());
 
-        if(!azuriranjeKorisnikaDto.getPrezime().isEmpty())
+        if(azuriranjeKorisnikaDto.getPrezime() != null)
             korisnik.setPrezime(azuriranjeKorisnikaDto.getPrezime());
 
-        if(!azuriranjeKorisnikaDto.getProfilnaSlika().isEmpty())
+        if(azuriranjeKorisnikaDto.getProfilnaSlika() != null)
             korisnik.setProfilnaSlika(azuriranjeKorisnikaDto.getProfilnaSlika());
 
         if(azuriranjeKorisnikaDto.getDatumRodjenja() != null)
             korisnik.setDatumRodjenja(azuriranjeKorisnikaDto.getDatumRodjenja());
 
-        if(!azuriranjeKorisnikaDto.getOpis().isEmpty())
+        if(azuriranjeKorisnikaDto.getOpis() != null)
             korisnik.setOpis(azuriranjeKorisnikaDto.getOpis());
 
-        if(!azuriranjeKorisnikaDto.getLozinka().isEmpty())
+        if(azuriranjeKorisnikaDto.getLozinka() != null && azuriranjeKorisnikaDto.getStaraLozinka() != null)
             if(!korisnik.getLozinka().equals(azuriranjeKorisnikaDto.getStaraLozinka()))
-                return new ResponseEntity("Lozinke se ne podudaraju", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("To nije trenutna lozinka", HttpStatus.BAD_REQUEST);
 
-        korisnik.setLozinka(azuriranjeKorisnikaDto.getLozinka());
+        if(azuriranjeKorisnikaDto.getLozinka() != null)
+            korisnik.setLozinka(azuriranjeKorisnikaDto.getLozinka());
 
         for (Korisnik k : korisnikService.findAll())
             if(k.getMejl().equals(azuriranjeKorisnikaDto.getMejl()))
                 return new ResponseEntity("Ovaj mejl se vec koristi", HttpStatus.BAD_REQUEST);
 
-        if(!azuriranjeKorisnikaDto.getMejl().isEmpty())
-            if(!korisnik.getLozinka().equals(azuriranjeKorisnikaDto.getStaraLozinka()))
-                korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
+        if(azuriranjeKorisnikaDto.getMejl() != null)
+            if(azuriranjeKorisnikaDto.getLozinka() != null && azuriranjeKorisnikaDto.getStaraLozinka() != null)
+                if(!korisnik.getLozinka().equals(azuriranjeKorisnikaDto.getStaraLozinka()))
+                    korisnik.setMejl(azuriranjeKorisnikaDto.getMejl());
 
         korisnikService.save(korisnik);
 
-        Korisnik k = new Korisnik();
-        k.setId(korisnik.getId());
-        k.setIme(korisnik.getIme());
-        k.setPrezime(korisnik.getPrezime());
-        k.setProfilnaSlika(korisnik.getProfilnaSlika());
-        k.setOpis(korisnik.getOpis());
-        k.setLozinka(korisnik.getLozinka());
-        k.setMejl(korisnik.getMejl());
-        k.setDatumRodjenja(korisnik.getDatumRodjenja());
-
-        return ResponseEntity.ok(k);
+        return ResponseEntity.ok("Uspesno izmenjen profil");
     }
 
     @PostMapping("/autor")
