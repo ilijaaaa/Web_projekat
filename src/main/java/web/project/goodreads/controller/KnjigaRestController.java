@@ -26,6 +26,8 @@ public class KnjigaRestController {
     private StavkaPoliceService stavkaPoliceService;
     @Autowired
     private ZanrService zanrService;
+    @Autowired
+    private KorisnikService korisnikService;
 
     @GetMapping("/knjige/{naslov}")
     public ResponseEntity<Set<Knjiga>> pretragaKnjige(@PathVariable(name = "naslov") String naslov){
@@ -57,8 +59,8 @@ public class KnjigaRestController {
         return ResponseEntity.ok(knjigas);
     }
 
-    @GetMapping("/knjiga/{id}")
-    public ResponseEntity<PregledKnjigeDto> pregledKnjige(@PathVariable(name = "id") Long id){
+    @GetMapping("/knjiga/{id}/{sessionId}")
+    public ResponseEntity<PregledKnjigeDto> pregledKnjige(@PathVariable(name = "id") Long id, @PathVariable(name = "sessionId") String sessionId){
         Knjiga k = knjigaService.findOne(id);
 
         if(k == null)
@@ -96,12 +98,13 @@ public class KnjigaRestController {
             }
         }
 
-        return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije));
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
+
+        return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, korisnik.getUloga().toString(), korisnik.getId()));
     }
 
     @GetMapping("/knjige/zanr/{naziv}")
     public ResponseEntity<Set<Knjiga>> pretragaKnjigeZanr(@PathVariable(name = "naziv") String naziv){
-
         Zanr zanr = zanrService.findOne(naziv);
         if (zanr == null) {
             return new ResponseEntity("Zanr sa datim nazivom ne postoji", HttpStatus.NOT_FOUND);
@@ -136,8 +139,8 @@ public class KnjigaRestController {
     }
 
     @PostMapping("/knjiga")
-    public ResponseEntity<Knjiga> dodajKnjigu(@RequestBody KnjigaDto knjigaDto, HttpSession session) {
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<Knjiga> dodajKnjigu(@RequestBody KnjigaDto knjigaDto, String sessionId) {
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() == Korisnik.Uloga.CITALAC))
             return new ResponseEntity("Nemate prava", HttpStatus.FORBIDDEN);
@@ -166,9 +169,9 @@ public class KnjigaRestController {
     }
 
     @PutMapping("/knjiga/{id}")
-    public ResponseEntity<Knjiga> azurirajKnjigu(@PathVariable(name="id") Long id, @RequestBody KnjigaDto knjigaDto, HttpSession session)
+    public ResponseEntity<Knjiga> azurirajKnjigu(@PathVariable(name="id") Long id, @RequestBody KnjigaDto knjigaDto, String sessionId)
     {
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() == Korisnik.Uloga.CITALAC))
             return new ResponseEntity("Nemate prava", HttpStatus.FORBIDDEN);

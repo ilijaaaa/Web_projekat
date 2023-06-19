@@ -88,6 +88,7 @@ public class KorisnikRestController {
         korisnik.setIme(k.getIme());
         korisnik.setPrezime(k.getPrezime());
         korisnik.setOpis(k.getOpis());
+        korisnik.setUloga(k.getUloga());
 
         Set<PolicaDto> police = new HashSet<>();
 

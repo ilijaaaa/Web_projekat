@@ -11,6 +11,8 @@ import ZahtevView from '../views/ZahtevView.vue'
 import RecenzijaView from '../views/RecenzijaView.vue'
 import IzmenaRecenzijeView from '../views/IzmenaRecenzijeView.vue'
 import AzuriranjeProfilaView from '../views/AzuriranjeProfilaView.vue'
+import DodajKnjiguView from '../views/DodajKnjiguView.vue'
+import IzmenaKnjigeView from '../views/IzmenaKnjigeView.vue'
 
 const routes = [
   {
@@ -84,6 +86,16 @@ const routes = [
     path: '/azuriranjeProfila',
     name: 'azuriranjeProfila',
     component: AzuriranjeProfilaView
+  },
+  {
+    path: '/dodajKnjigu',
+    name: 'dodajKnjigu',
+    component: DodajKnjiguView
+  },
+  {
+    path: '/izmenaKnjige',
+    name: 'izmenaKnjige',
+    component: IzmenaKnjigeView
   },
 ]
 

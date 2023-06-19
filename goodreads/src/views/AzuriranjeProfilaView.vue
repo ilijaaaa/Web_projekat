@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     fetchData() {
-      axios.get('http://localhost:8080/api/profil/' + this.$route.query.sessionId)
+      axios.get('http://localhost:8080/api/profil/' + localStorage.getItem('korisnik'))
         .then(response => {
           console.log(response.data);
           this.azuriranjeKorisnikaDto = response.data.korisnik;
@@ -73,7 +73,7 @@ export default {
     },
     azurirajProfil() {
       axios
-        .put('http://localhost:8080/api/korisnik', this.azuriranjeKorisnikaDto, { params: { sessionId: this.$route.query.sessionId } })
+        .put('http://localhost:8080/api/korisnik', this.azuriranjeKorisnikaDto, { params: { sessionId: localStorage.getItem('korisnik') } })
         .then(response => {
           this.response = response.data;
           this.$router.go(-1);

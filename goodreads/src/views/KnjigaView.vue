@@ -22,7 +22,10 @@
             </div>
         </div>
         <div v-if="sessionId">
-            <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj knjigu</button>
+            <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj na policu</button>
+        </div>
+        <div v-if="uloga == 'ADMINISTRATOR' || id == autor.id">
+            <button class="dodaj-knjigu-button" @click="this.$router.push('/izmenaKnjige?knjiga_id=' + knjiga.id)">Izmeni knjigu</button>
         </div>
         <h2 class="reviews-title">Recenzije:</h2>
         <ul class="reviews-list">
@@ -56,6 +59,8 @@ export default {
             autor: {},
             zanr: {},
             recenzije: [],
+            uloga: null,
+            id: '',
             loading: true,
             error: null,
             sessionId: '',
@@ -66,13 +71,15 @@ export default {
     },
     methods: {
         fetchData() {
-            axios.get('http://localhost:8080/api/knjiga/' + this.$route.query.id)
+            axios.get('http://localhost:8080/api/knjiga/' + this.$route.query.id + '/' + localStorage.getItem('korisnik'))
                 .then(response => {
                     console.log(response.data);
                     this.knjiga = response.data.knjiga;
                     this.autor = response.data.knjiga.autor;
                     this.zanr = response.data.knjiga.zanr;
                     this.recenzije = response.data.recenzije;
+                    this.uloga = response.data.uloga;
+                    this.id = response.data.id;
                     this.sessionId = localStorage.getItem("korisnik");
                     this.loading = false;
                 })

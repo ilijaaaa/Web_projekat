@@ -7,7 +7,7 @@
         <h2>{{ korisnik.korisnickoIme }}</h2>
       </div>
       <div class="profile-picture">
-        <a :href="'/azuriranjeProfila?sessionId=' + this.$route.query.sessionId">
+        <a :href="'/azuriranjeProfila'">
           <img :src="korisnik.profilnaSlika" alt="Korisnička slika" />
         </a>
         <div class="overlay"></div>
@@ -17,6 +17,9 @@
       </div>
       <div>
         <button @click="logout" class="logout-button">Odjava</button>
+      </div>
+      <div v-if="korisnik.uloga != 'CITALAC'">
+        <button @click="this.$router.push('/dodajKnjigu')" class="dodaj-knjigu-button">Dodaj knjigu</button>
       </div>
       <div v-if="korisnik.opis">
         <h3>Opis: {{ korisnik.opis }}</h3>
