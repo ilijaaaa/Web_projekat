@@ -13,6 +13,7 @@ import IzmenaRecenzijeView from '../views/IzmenaRecenzijeView.vue'
 import AzuriranjeProfilaView from '../views/AzuriranjeProfilaView.vue'
 import DodajKnjiguView from '../views/DodajKnjiguView.vue'
 import IzmenaKnjigeView from '../views/IzmenaKnjigeView.vue'
+import DodajAutoraView from '../views/DodajAutoraView.vue'
 
 const routes = [
   {
@@ -96,6 +97,11 @@ const routes = [
     path: '/izmenaKnjige',
     name: 'izmenaKnjige',
     component: IzmenaKnjigeView
+  },
+  {
+    path: '/dodajAutora',
+    name: 'dodajAutora',
+    component: DodajAutoraView
   },
 ]
 

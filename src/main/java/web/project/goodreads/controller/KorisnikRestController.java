@@ -230,8 +230,8 @@ public class KorisnikRestController {
     }
 
     @PostMapping("/autor")
-    public ResponseEntity<Autor> dodajAutora(@RequestBody AutorDto autorDto, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<Autor> dodajAutora(@RequestBody AutorDto autorDto, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if (korisnik == null || korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
             return new ResponseEntity("Nemate adminska prava", HttpStatus.FORBIDDEN);
