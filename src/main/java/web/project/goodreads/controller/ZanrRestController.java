@@ -6,6 +6,7 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import web.project.goodreads.dto.StringDto;
 import web.project.goodreads.entity.*;
+import web.project.goodreads.service.KorisnikService;
 import web.project.goodreads.service.ZanrService;
 
 import java.util.List;
@@ -17,14 +18,17 @@ public class ZanrRestController {
     @Autowired
     private ZanrService zanrService;
 
+    @Autowired
+    private KorisnikService korisnikService;
+
     @GetMapping("/zanrovi")
     public ResponseEntity<List<Zanr>> pregledZanrova(){
         return ResponseEntity.ok(zanrService.findAll());
     }
 
     @PostMapping("/zanr")
-    public ResponseEntity<Zanr> dodajZanr(@RequestBody StringDto stringDto, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<Zanr> dodajZanr(@RequestBody StringDto stringDto, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);

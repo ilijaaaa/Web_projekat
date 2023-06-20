@@ -14,6 +14,7 @@ import AzuriranjeProfilaView from '../views/AzuriranjeProfilaView.vue'
 import DodajKnjiguView from '../views/DodajKnjiguView.vue'
 import IzmenaKnjigeView from '../views/IzmenaKnjigeView.vue'
 import DodajAutoraView from '../views/DodajAutoraView.vue'
+import DodajZanrView from '../views/DodajZanrView.vue'
 
 const routes = [
   {
@@ -102,6 +103,11 @@ const routes = [
     path: '/dodajAutora',
     name: 'dodajAutora',
     component: DodajAutoraView
+  },
+  {
+    path: '/dodajZanr',
+    name: 'dodajZanr',
+    component: DodajZanrView
   },
 ]
 

@@ -100,7 +100,10 @@ public class KnjigaRestController {
 
         Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
-        return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, korisnik.getUloga().toString(), korisnik.getId()));
+        if(korisnik == null)
+            return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, null, null));
+        else
+            return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, korisnik.getUloga().toString(), korisnik.getId()));
     }
 
     @GetMapping("/knjige/zanr/{naziv}")

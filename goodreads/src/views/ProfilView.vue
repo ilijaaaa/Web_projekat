@@ -19,6 +19,9 @@
         <button @click="logout" class="logout-button">Odjava</button>
       </div>
       <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
+        <button @click="this.$router.push('/dodajZanr')" class="dodaj-knjigu-button">Dodaj žanr</button>
+      </div>
+      <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
         <button @click="this.$router.push('/dodajAutora')" class="dodaj-knjigu-button">Dodaj autora</button>
       </div>
       <div v-if="korisnik.uloga != 'CITALAC'">
@@ -163,9 +166,6 @@ export default {
         .catch(error => {
           console.error(error);
         });
-    },
-    addAuthor() {
-      this.$router.push('/dodavanjeAutora?sessionId=' + this.$route.query.sessionId);
     },
   }
 };
