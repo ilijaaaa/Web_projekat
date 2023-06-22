@@ -14,6 +14,8 @@ import AzuriranjeProfilaView from '../views/AzuriranjeProfilaView.vue'
 import DodajKnjiguView from '../views/DodajKnjiguView.vue'
 import IzmenaKnjigeView from '../views/IzmenaKnjigeView.vue'
 import DodajAutoraView from '../views/DodajAutoraView.vue'
+import ZahteviView from '../views/ZahteviView.vue'
+import AzuriranjeAutoraView from '../views/AzuriranjeAutoraView.vue'
 
 const routes = [
   {
@@ -102,6 +104,16 @@ const routes = [
     path: '/dodajAutora',
     name: 'dodajAutora',
     component: DodajAutoraView
+  },
+  {
+    path: '/zahtevi',
+    name: 'zahtevi',
+    component: ZahteviView
+  },
+  {
+    path: '/azuriranjeAutora',
+    name: 'azuriranjeAutora',
+    component: AzuriranjeAutoraView
   },
 ]
 

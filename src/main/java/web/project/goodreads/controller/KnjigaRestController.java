@@ -72,6 +72,7 @@ public class KnjigaRestController {
         autor.setPrezime(k.getAutor().getPrezime());
         autor.setProfilnaSlika(k.getAutor().getProfilnaSlika());
         autor.setOpis(k.getAutor().getOpis());
+        autor.setAktivan(k.getAutor().getAktivan());
 
         Knjiga knjiga = new Knjiga(k.getNaslov(), k.getSlika(), k.getOpis(), k.getIsbn(), k.getDatum(), k.getBrStr(), k.getZanr(), autor);
         knjiga.setId(k.getId());
@@ -100,7 +101,10 @@ public class KnjigaRestController {
 
         Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
-        return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, korisnik.getUloga().toString(), korisnik.getId()));
+        if(korisnik == null)
+            return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, null, null));
+        else
+            return ResponseEntity.ok(new PregledKnjigeDto(knjiga, recenzije, korisnik.getUloga().toString(), korisnik.getId()));
     }
 
     @GetMapping("/knjige/zanr/{naziv}")
@@ -220,9 +224,9 @@ public class KnjigaRestController {
     }
 
     @Transactional
-    @DeleteMapping("/knjiga/{id}")
-    public ResponseEntity<List<Knjiga>> obrisiKnjigu(@PathVariable(name="id") Long id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    @DeleteMapping("/knjiga/{id}/{sessionId}")
+    public ResponseEntity<List<Knjiga>> obrisiKnjigu(@PathVariable(name="id") Long id, @PathVariable(name="sessionId") String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (!korisnik.getUloga().equals(Korisnik.Uloga.ADMINISTRATOR)))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);

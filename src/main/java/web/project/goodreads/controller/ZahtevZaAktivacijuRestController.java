@@ -49,9 +49,9 @@ public class ZahtevZaAktivacijuRestController {
         return ResponseEntity.ok(zahtevDto);
     }
 
-    @GetMapping("/zahtevi")
-    public ResponseEntity<List<ZahtevZaAktivaciju>> getZahtevi(HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    @GetMapping("/zahtevi/{sessionId}")
+    public ResponseEntity<List<ZahtevZaAktivaciju>> getZahtevi(@PathVariable(name = "sessionId") String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);

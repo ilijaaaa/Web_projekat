@@ -24,8 +24,8 @@ public class KorisnikRestController {
     @Autowired
     private StavkaPoliceService stavkaPoliceService;
 
-    @GetMapping("/korisnik/{id}")
-    public ResponseEntity<PregledKorisnikaDto> pregledKorisnika(@PathVariable(name = "id") Long id){
+    @GetMapping("/korisnik/{id}/{sessionId}")
+    public ResponseEntity<PregledKorisnikaDto> pregledKorisnika(@PathVariable(name = "id") Long id, @PathVariable(name = "sessionId") String sessionId){
         Korisnik k = korisnikService.findOne(id);
 
         if(k == null){
@@ -69,7 +69,12 @@ public class KorisnikRestController {
             police.add(polica);
         }
 
-        return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police));
+        Korisnik admin = new Korisnik();
+
+        if(admin == null)
+            return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police, admin.getUloga().toString()));
+        else
+            return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police, null));
     }
 
     @GetMapping("/profil/{sessionId}")
@@ -104,6 +109,7 @@ public class KorisnikRestController {
                     Autor autor = new Autor();
                     autor.setIme(sp.getKnjiga().getAutor().getIme());
                     autor.setPrezime(sp.getKnjiga().getAutor().getPrezime());
+                    autor.setAktivan(sp.getKnjiga().getAutor().getAktivan());
 
                     Knjiga knjiga = new Knjiga();
                     knjiga.setId(sp.getKnjiga().getId());
@@ -118,7 +124,7 @@ public class KorisnikRestController {
             police.add(polica);
         }
 
-        return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police));
+        return ResponseEntity.ok(new PregledKorisnikaDto(korisnik, police, null));
     }
 
     @PostMapping(value="/signin")
@@ -249,8 +255,8 @@ public class KorisnikRestController {
     }
 
     @PutMapping("/autor/{id}")
-    public ResponseEntity<Autor> azurirajAutora(@PathVariable(name="id") Long id, @RequestBody AutorDto autorDto, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<Autor> azurirajAutora(@PathVariable(name="id") Long id, @RequestBody AutorDto autorDto, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if (korisnik == null || korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR)
             return new ResponseEntity("Nemate adminska prava", HttpStatus.FORBIDDEN);

@@ -19,6 +19,9 @@
                 </a>
                 <h2 class="author-name">{{ autor.ime }} {{ autor.prezime }}</h2>
                 <h3 class="author-description">Opis: {{ autor.opis }}</h3>
+                <div v-if="autor.aktivan == false && uloga == 'ADMINISTRATOR'">
+                    <button class="dodaj-knjigu-button" @click="this.$router.push('/azuriranjeAutora?id=' + autor.id)">Ažuriraj autora</button>
+                </div>
             </div>
         </div>
         <div v-if="sessionId">
@@ -26,6 +29,10 @@
         </div>
         <div v-if="uloga == 'ADMINISTRATOR' || id == autor.id">
             <button class="dodaj-knjigu-button" @click="this.$router.push('/izmenaKnjige?knjiga_id=' + knjiga.id)">Izmeni knjigu</button>
+        </div>
+        <div v-if="uloga == 'ADMINISTRATOR'">
+            <button class="dodaj-knjigu-button" @click="obrisiKnjigu(knjiga.id)">Izbriši knjigu</button>
+            <div v-if="errorKnjiga" class="error">{{ errorKnjiga }}</div>
         </div>
         <h2 class="reviews-title">Recenzije:</h2>
         <ul class="reviews-list">
@@ -63,6 +70,7 @@ export default {
             id: '',
             loading: true,
             error: null,
+            errorKnjiga: null,
             sessionId: '',
         };
     },
@@ -87,6 +95,17 @@ export default {
                     console.error(error);
                     this.error = 'Knjiga ne postoji';
                     this.loading = false;
+                });
+        },
+        obrisiKnjigu(id){
+            axios.delete('http://localhost:8080/api/knjiga/' + id + '/' + this.sessionId)
+                .then(response => {
+                    console.log(response.data);
+                    this.$router.go(-1);
+                })
+                .catch(error => {
+                    console.error(error);
+                    this.errorKnjiga = 'Knjiga ima recenzije';
                 });
         }
     }
