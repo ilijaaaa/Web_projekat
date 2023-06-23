@@ -14,10 +14,10 @@
             <input type="text" v-model="knjigaDto.isbn" placeholder="ISBN" required/><br />
         </div>
         <div class="form-group">
-            <input type="date" v-model="knjigaDto.datum" placeholder="Datum izdavanja" required/><br />
+            <input type="date" v-model="knjigaDto.datum" placeholder="Datum izdavanja" required :max="new Date().toISOString().substring(0, 10)"/><br />
         </div>
         <div class="form-group">
-            <input type="number" v-model="knjigaDto.brStr" placeholder="Broj strana" required/><br />
+            <input type="number" v-model="knjigaDto.brStr" placeholder="Broj strana" required min="1"/><br />
         </div>
         <div class="form-group">
             <input type="text" v-model="knjigaDto.zanr" placeholder="Zanr" required/><br />

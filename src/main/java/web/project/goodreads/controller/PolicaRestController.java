@@ -64,6 +64,9 @@ public class PolicaRestController {
         if(policaService.findOne(id).isPrimarno())
             return new ResponseEntity("Zabranjeno brisanje primarnih polica", HttpStatus.FORBIDDEN);
 
+        for(StavkaPolice sp : stavkaPoliceService.findAll(policaService.findOne(id)))
+            stavkaPoliceService.delete(sp.getId());
+
         policaService.deleteOne(id);
 
         return ResponseEntity.ok("Uspesno izbrisana polica");

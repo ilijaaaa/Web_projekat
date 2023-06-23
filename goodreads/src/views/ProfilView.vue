@@ -22,10 +22,13 @@
         <button @click="this.$router.push('/dodajAutora')" class="dodaj-knjigu-button">Dodaj autora</button>
       </div>
       <div v-if="korisnik.uloga != 'CITALAC'">
-        <button @click="this.$router.push('/dodajKnjigu')" class="dodaj-knjigu-button">Dodaj knjigu</button>
+        <button @click="this.$router.push('/dodajKnjigu?uloga=' + korisnik.uloga)" class="dodaj-knjigu-button">Dodaj knjigu</button>
       </div>
       <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
         <button @click="this.$router.push('/zahtevi')" class="dodaj-knjigu-button">Pregled zahteva</button>
+      </div>
+      <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
+        <button @click="this.$router.push('/dodajZanr')" class="dodaj-knjigu-button">Dodaj žanr</button>
       </div>
       <div v-if="korisnik.opis">
         <h3>Opis: {{ korisnik.opis }}</h3>

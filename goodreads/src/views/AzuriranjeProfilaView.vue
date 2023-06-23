@@ -16,7 +16,7 @@
       </div>
       <label>Datum rođenja:</label>
       <div class="form-group">
-        <input type="date" v-model="azuriranjeKorisnikaDto.datumRodjenja" placeholder="Datum rođenja" /><br />
+        <input type="date" v-model="azuriranjeKorisnikaDto.datumRodjenja" placeholder="Datum rođenja" :max="new Date().toISOString().substring(0, 10)"/><br />
       </div>
       <label>Opis:</label>
       <div class="form-group">
@@ -26,7 +26,7 @@
         <input type="password" v-model="azuriranjeKorisnikaDto.lozinka" placeholder="Nova lozinka" /><br />
       </div>
       <div class="form-group">
-        <input type="password" v-model="azuriranjeKorisnikaDto.staraLozinka" placeholder="Stara lozinka" /><br />
+        <input type="password" v-model="azuriranjeKorisnikaDto.staraLozinka" placeholder="Trenutna lozinka" /><br />
       </div>
       <div class="form-group">
         <input type="email" v-model="azuriranjeKorisnikaDto.mejl" placeholder="Mejl" /><br />
@@ -51,7 +51,7 @@ export default {
         opis: null,
         lozinka: null,
         staraLozinka: null,
-        mejl: null
+        mejl: null,
       },
       errorMessage: '',
     };
@@ -68,7 +68,6 @@ export default {
         })
         .catch(error => {
           console.error(error);
-          this.errorMessage = error.response.data;
         });
     },
     azurirajProfil() {
@@ -80,6 +79,7 @@ export default {
         })
         .catch(error => {
           console.error(error);
+          this.errorMessage = error.response.data;
         });
     }
   }

@@ -47,6 +47,7 @@
         axios.put('http://localhost:8080/api/zahtev/odobri/' + zahtev.id, null, {params: {sessionId: localStorage.getItem('korisnik')}})
           .then((response) => {
             console.log(response);
+            this.$router.go(0);
           })
           .catch((error) => {
             console.error('Error:', error);
@@ -56,6 +57,7 @@
         axios.put('http://localhost:8080/api/zahtev/odbij/' + zahtev.id, null, {params: {sessionId: localStorage.getItem('korisnik')}})
           .then((response) => {
             console.log(response);
+            this.$router.go(0);
           })
           .catch((error) => {
             console.error('Error:', error);

@@ -89,6 +89,8 @@ public class ZahtevZaAktivacijuRestController {
 
         Autor autor = zahtevZaAktivaciju.getAutor();
         autor.setAktivan(true);
+        autor.setMejl(zahtevZaAktivaciju.getMejl());
+        autor.setLozinka("123456789");
         this.autorService.save(autor);
 
         Polica p1 = new Polica("Want to read", true, autor);
@@ -100,8 +102,11 @@ public class ZahtevZaAktivacijuRestController {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(zahtevZaAktivaciju.getMejl());
-        mailMessage.setSubject("Zahtev odobren");
-        mailMessage.setText("Zahtev odobren, lozinka: 123456789");
+        mailMessage.setSubject("Goodreads zahtev za aktivaciju autora");
+        mailMessage.setText("Poštovani,\n" +
+                            "Zahtev je odobren.\n\n" +
+                            "Mejl: " + zahtevZaAktivaciju.getMejl() +
+                            "\nLozinka: 123456789");
         javaMailSender.send(mailMessage);
 
         ZahtevZaAktivacijuDto zahtevZaAktivacijuDto = new ZahtevZaAktivacijuDto();
@@ -130,8 +135,9 @@ public class ZahtevZaAktivacijuRestController {
 
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(zahtevZaAktivaciju.getMejl());
-        mailMessage.setSubject("Zahtev odbijen");
-        mailMessage.setText("Zahtev odbijen");
+        mailMessage.setSubject("Goodreads zahtev za aktivaciju autora");
+        mailMessage.setText("Poštovani,\n\n" +
+                            "Zahtev je odbijen.");
         javaMailSender.send(mailMessage);
 
         ZahtevZaAktivacijuDto zahtevZaAktivacijuDto = new ZahtevZaAktivacijuDto();

@@ -1,33 +1,35 @@
 <template>
-    <h2 class="subheading">Dodaj knjigu</h2>
+    <h2 class="subheading">Izmeni knjigu</h2>
     <form @submit.prevent="izmeniKnjigu" class="form">
         <label>Naslov:</label>
         <div class="form-group">
-            <input type="text" v-model="knjigaDto.naslov"/><br />
+            <input type="text" v-model="knjigaDto.naslov" /><br />
         </div>
         <label>Slika:</label>
         <div class="form-group">
-            <input type="text" v-model="knjigaDto.slika"/><br />
+            <input type="text" v-model="knjigaDto.slika" /><br />
         </div>
         <label>Opis:</label>
         <div class="form-group">
-            <input type="text" v-model="knjigaDto.opis"/><br />
+            <input type="text" v-model="knjigaDto.opis" /><br />
         </div>
         <label>Datum izdavanja:</label>
         <div class="form-group">
-            <input type="date" v-model="knjigaDto.datum"/><br />
+            <input type="date" v-model="knjigaDto.datum" :max="new Date().toISOString().substring(0, 10)" /><br />
         </div>
         <label>Broj strana:</label>
         <div class="form-group">
-            <input type="number" v-model="knjigaDto.brStr"/><br />
+            <input type="number" v-model="knjigaDto.brStr" min="1" /><br />
         </div>
         <label>Žanr:</label>
         <div class="form-group">
-            <input type="text" v-model="knjigaDto.zanr" required/><br />
+            <input type="text" v-model="knjigaDto.zanr" required /><br />
         </div>
-        <label>ID autora:</label>
-        <div class="form-group">
-            <input type="number" v-model="knjigaDto.autor" required/><br />
+        <div v-if="uloga == 'ADMINISTRATOR'">
+            <label>ID autora:</label>
+            <div class="form-group">
+                <input type="number" v-model="knjigaDto.autor" required /><br />
+            </div>
         </div>
         <button type="submit" class="submit-button">Izmeni</button>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
@@ -50,6 +52,7 @@ export default {
                 autor: ''
             },
             errorMessage: '',
+            uloga: '',
         };
     },
     mounted() {
@@ -68,6 +71,7 @@ export default {
                     this.knjigaDto.zanr = response.data.knjiga.zanr.naziv;
                     this.knjigaDto.autor = response.data.knjiga.autor.id;
                     this.loading = false;
+                    this.uloga = this.$route.query.ulog;
                 })
                 .catch(error => {
                     console.error(error);

@@ -15,6 +15,7 @@ import DodajKnjiguView from '../views/DodajKnjiguView.vue'
 import IzmenaKnjigeView from '../views/IzmenaKnjigeView.vue'
 import DodajAutoraView from '../views/DodajAutoraView.vue'
 import ZahteviView from '../views/ZahteviView.vue'
+import DodajZanrView from '../views/DodajZanrView.vue'
 import AzuriranjeAutoraView from '../views/AzuriranjeAutoraView.vue'
 
 const routes = [
@@ -109,6 +110,11 @@ const routes = [
     path: '/zahtevi',
     name: 'zahtevi',
     component: ZahteviView
+  },
+  {
+    path: '/dodajZanr',
+    name: 'dodajZanr',
+    component: DodajZanrView
   },
   {
     path: '/azuriranjeAutora',

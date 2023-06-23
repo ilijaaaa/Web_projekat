@@ -16,7 +16,7 @@
       <div v-if="korisnik.opis">
         <h3>Opis: {{ korisnik.opis }}</h3>
       </div>
-      <div v-if="korisnik.uloga == 'AUTOR'">
+      <div v-if="sessionId == null && aktivan == false">
         <button @click="this.$router.push('/zahtev?id=' + this.korisnik.id)" class="zahtev-button">Zahtev za
           aktivaciju</button>
       </div>
@@ -54,6 +54,8 @@ export default {
       police: [],
       loading: true,
       error: null,
+      sessionId: null,
+      aktivan: '',
     };
   },
   mounted() {
@@ -67,6 +69,8 @@ export default {
           this.korisnik = response.data.korisnik;
           this.police = response.data.police;
           this.loading = false;
+          this.sessionId = localStorage.getItem('korisnik');
+          this.aktivan = response.data.aktivan;
         })
         .catch(error => {
           console.error(error);

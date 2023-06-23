@@ -29,6 +29,9 @@ public class KnjigaRestController {
     @Autowired
     private KorisnikService korisnikService;
 
+    @GetMapping("/knjige")
+    public ResponseEntity<List<Knjiga>> pretragaKnjige() { return ResponseEntity.ok(knjigaService.findAll()); }
+
     @GetMapping("/knjige/{naslov}")
     public ResponseEntity<Set<Knjiga>> pretragaKnjige(@PathVariable(name = "naslov") String naslov){
         Set<Knjiga> knjige = knjigaService.findAll(naslov);

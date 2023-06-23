@@ -9,13 +9,15 @@ public class PregledKorisnikaDto {
     private Korisnik korisnik;
     private Set<PolicaDto> police;
     private String uloga;
+    private Boolean aktivan;
 
     public  PregledKorisnikaDto() {}
 
-    public PregledKorisnikaDto(Korisnik korisnik, Set<PolicaDto> police, String uloga) {
+    public PregledKorisnikaDto(Korisnik korisnik, Set<PolicaDto> police, String uloga, Boolean aktivan) {
         this.korisnik = korisnik;
         this.police = police;
         this.uloga = uloga;
+        this.aktivan = aktivan;
     }
 
     public Korisnik getKorisnik() {
@@ -40,5 +42,13 @@ public class PregledKorisnikaDto {
 
     public void setUloga(String uloga) {
         this.uloga = uloga;
+    }
+
+    public Boolean getAktivan() {
+        return aktivan;
+    }
+
+    public void setAktivan(Boolean aktivan) {
+        this.aktivan = aktivan;
     }
 }

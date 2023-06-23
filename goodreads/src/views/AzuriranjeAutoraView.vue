@@ -1,5 +1,5 @@
 <template>
-    <h2 class="subheading">Dodaj autora</h2>
+    <h2 class="subheading">Izmeni autora</h2>
     <form @submit.prevent="azurirajAutora" class="form">
         <div class="form-group">
             <input v-model="autorDto.ime" type="text"/>
@@ -43,7 +43,7 @@ export default {
                     console.log(response.data);
                     this.autorDto.ime = response.data.korisnik.ime;
                     this.autorDto.prezime = response.data.korisnik.prezime;
-                    this.autorDto.slika = response.data.korisnik.slika;
+                    this.autorDto.slika = response.data.korisnik.profilnaSlika;
                     this.autorDto.opis = response.data.korisnik.opis;
                 })
                 .catch(error => {

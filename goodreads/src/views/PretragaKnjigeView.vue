@@ -2,12 +2,28 @@
     <div class="container">
         <h2>Pretraga knjige</h2>
         <div class="search-bar">
-            <input type="text" v-model="searchQuery" placeholder="Naslov" @keydown.enter="pretragaKnjige" required/>
+            <input type="text" v-model="searchQuery" placeholder="Naslov" @keydown.enter="pretragaKnjige" required />
             <button @click="pretragaKnjige">Pretraga</button>
         </div>
 
         <div v-if="loading" class="loading">Učitavanje...</div>
         <div v-else-if="errorMessage" class="error">{{ errorMessage }}</div>
+
+        <div v-if="knjige.length == 0">
+            <li v-for="knjiga in sveKnjige" :key="knjiga.id" class="book-item">
+                <div class="book-image-info">
+                    <a :href="'/knjiga?id=' + knjiga.id">
+                        <img class="book-image" :src="knjiga.slika" :alt="knjiga.naslov" :title="knjiga.naslov" />
+                    </a>
+                    <div class="book-info">
+                        <h2 class="book-title">{{ knjiga.naslov }}</h2>
+                        <h2 class="author-name">{{ knjiga.autor.ime }} {{ knjiga.autor.prezime }}</h2>
+                        <vue-star-rating :rating="knjiga.ocena" :increment=0.01 read-only :fixed-points=2></vue-star-rating>
+                        <h4 class="book-published">Izdato: {{ knjiga.datum }}</h4>
+                    </div>
+                </div>
+            </li>
+        </div>
 
         <div v-if="knjige.length > 0">
             <h2 style="color: #007bff">Knjige:</h2>
@@ -44,10 +60,24 @@ export default {
             searchQuery: '',
             loading: false,
             errorMessage: '',
-            knjige: []
+            knjige: [],
+            sveKnjige: []
         };
     },
+    mounted() {
+        this.fetchData();
+    },
     methods: {
+        fetchData() {
+            axios
+                .get('http://localhost:8080/api/knjige')
+                .then(response => {
+                    this.sveKnjige = response.data;
+                })
+                .catch(error => {
+                    console.log(error);
+                })
+        },
         pretragaKnjige() {
             this.loading = true;
             this.errorMessage = '';
@@ -71,13 +101,13 @@ export default {
 
 <style scoped>
 .loading {
-  font-size: 20px;
-  color: #888;
+    font-size: 20px;
+    color: #888;
 }
 
 .error {
-  font-size: 20px;
-  color: #f00;
+    font-size: 20px;
+    color: #f00;
 }
 
 .container {

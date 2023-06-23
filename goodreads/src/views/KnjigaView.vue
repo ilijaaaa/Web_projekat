@@ -28,7 +28,7 @@
             <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj na policu</button>
         </div>
         <div v-if="uloga == 'ADMINISTRATOR' || id == autor.id">
-            <button class="dodaj-knjigu-button" @click="this.$router.push('/izmenaKnjige?knjiga_id=' + knjiga.id)">Izmeni knjigu</button>
+            <button class="dodaj-knjigu-button" @click="this.$router.push({path: 'izmenaKnjige', query: {ulog: uloga, knjiga_id: knjiga.id}})">Izmeni knjigu</button>
         </div>
         <div v-if="uloga == 'ADMINISTRATOR'">
             <button class="dodaj-knjigu-button" @click="obrisiKnjigu(knjiga.id)">Izbriši knjigu</button>
@@ -44,7 +44,7 @@
                 <vue-star-rating :rating="recenzija.ocena" :show-rating="false" read-only></vue-star-rating>
                 <p class="review-text">{{ recenzija.tekst }}</p>
                 <p class="review-date">{{ recenzija.datum }}</p>
-                <div v-if="recenzija.korisnik.sessionId == this.sessionId">
+                <div v-if="recenzija.korisnik.sessionId == this.sessionId && this.sessionId != null">
                     <button class="dodaj-knjigu-button" @click="this.$router.push({path: 'izmenaRecenzije', query: {id: recenzija.id, knjiga_id: knjiga.id}})" style="margin-left: 10px; margin-bottom: 25px;">Izmeni</button>
                 </div>
             </li>
