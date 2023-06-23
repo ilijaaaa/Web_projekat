@@ -4,10 +4,12 @@ INSERT INTO KORISNIK (ime, prezime, korisnicko_ime, mejl, lozinka, datum_rodjenj
 INSERT INTO KORISNIK (ime, prezime, korisnicko_ime, mejl, lozinka, datum_rodjenja, profilna_slika, opis, uloga) VALUES ('Admin', 'Admin', 'admin', 'admin@email.com', 'admin', '1990-01-01', 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png', 'ok', 'ADMINISTRATOR');
 INSERT INTO KORISNIK (ime, prezime, korisnicko_ime, mejl, lozinka, datum_rodjenja, profilna_slika, opis, uloga) VALUES ('Mark', 'Smith', 'marksmith', 'marksmith@email.com', 'password456', '1985-07-22', 'https://w0.peakpx.com/wallpaper/979/89/HD-wallpaper-purple-smile-design-eye-smily-profile-pic-face.jpg', 'odlican', 'AUTOR');
 INSERT INTO KORISNIK (ime, prezime, korisnicko_ime, mejl, lozinka, datum_rodjenja, profilna_slika, opis, uloga) VALUES ('Sara', 'Johnson', 'sarajohnson', 'sarajohnson@email.com', 'password789', '1999-11-03', 'https://play-lh.googleusercontent.com/i1qvljmS0nE43vtDhNKeGYtNlujcFxq72WAsyD2htUHOac57Z9Oiew0FrpGKlEehOvo=w240-h480-rw', 'sjajna', 'CITALAC');
+INSERT INTO KORISNIK (ime, prezime, korisnicko_ime, mejl, lozinka, datum_rodjenja, profilna_slika, opis, uloga) VALUES ('Ilija', 'Vitosevic', 'ilijavitosevic', 'ilija.vitosevic@email.com', 'password', '2002-03-16', 'https://w0.peakpx.com/wallpaper/979/89/HD-wallpaper-purple-smile-design-eye-smily-profile-pic-face.jpg', 'najjaci', 'AUTOR');
 
 -- popunjavanje tabele autora
 INSERT INTO AUTOR (aktivan, id) VALUES (true, 2);
 INSERT INTO AUTOR (aktivan, id) VALUES (true, 4);
+INSERT INTO AUTOR (aktivan, id) VALUES (false, 6);
 
 -- popunjavanje tabele žanrova
 INSERT INTO ZANR (naziv) VALUES ('Drama');
@@ -49,3 +51,4 @@ INSERT INTO RECENZIJA (ocena, tekst, datum, korisnik_id, stavka_police_id) VALUE
 
 -- popunjavanje tabele zahteva za aktivaciju naloga autora
 INSERT INTO ZAHTEV_ZA_AKTIVACIJU (mejl, telefon, poruka, datum, status, autor_id) VALUES ('janeduncan@email.com', '555-5555', 'I would like to become an author on the platform', '2022-03-20', 'CEKANJE', 2);
+INSERT INTO ZAHTEV_ZA_AKTIVACIJU (mejl, telefon, poruka, datum, status, autor_id) VALUES ('ilija.vitosevic@gmail.com', '555-5555', 'molim vas', '2022-03-20', 'CEKANJE', 6);

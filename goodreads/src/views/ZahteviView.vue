@@ -13,8 +13,8 @@
             <p>Datum: {{ zahtev.datum }}</p>
             <p>Status: {{ zahtev.status }}</p>
             <p>Autor: {{ zahtev.autor }}</p>
-            <button @click="prihvati">Prihvati</button>
-            <button @click="odbij">Odbij</button>
+            <button @click="prihvati(zahtev)">Prihvati</button>
+            <button @click="odbij(zahtev)">Odbij</button>
           </li>
         </ul>
       </div>
@@ -43,13 +43,24 @@
             console.error('Error:', error);
           });
       },
-      prihvati(){
-
+      prihvati(zahtev){
+        axios.put('http://localhost:8080/api/zahtev/odobri/' + zahtev.id, null, {params: {sessionId: localStorage.getItem('korisnik')}})
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
       },
-      odbij(){
-
+      odbij(zahtev){
+        axios.put('http://localhost:8080/api/zahtev/odbij/' + zahtev.id, null, {params: {sessionId: localStorage.getItem('korisnik')}})
+          .then((response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.error('Error:', error);
+          });
       },
     },
   };
   </script>
-  

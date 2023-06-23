@@ -3,6 +3,8 @@ package web.project.goodreads.controller;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.web.bind.annotation.*;
 import web.project.goodreads.dto.ZahtevZaAktivacijuDto;
 import web.project.goodreads.entity.*;
@@ -22,6 +24,9 @@ public class ZahtevZaAktivacijuRestController {
     private AutorService autorService;
     @Autowired
     private  PolicaService policaService;
+    @Autowired
+    private JavaMailSender javaMailSender;
+
 
     @PostMapping("/zahtev/{id}")
     public ResponseEntity<ZahtevZaAktivacijuDto> zahtev(@RequestBody ZahtevZaAktivacijuDto zahtevDto, @PathVariable(name = "id") Long id, HttpSession session){
@@ -65,8 +70,8 @@ public class ZahtevZaAktivacijuRestController {
     }
 
     @PutMapping("/zahtev/odobri/{id}")
-    public ResponseEntity<ZahtevZaAktivacijuDto> odobriZahtev(@PathVariable(name ="id") Long id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<ZahtevZaAktivacijuDto> odobriZahtev(@PathVariable(name ="id") Long id, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
@@ -93,6 +98,12 @@ public class ZahtevZaAktivacijuRestController {
         policaService.save(p2);
         policaService.save(p3);
 
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(zahtevZaAktivaciju.getMejl());
+        mailMessage.setSubject("Zahtev odobren");
+        mailMessage.setText("Zahtev odobren, lozinka: 123456789");
+        javaMailSender.send(mailMessage);
+
         ZahtevZaAktivacijuDto zahtevZaAktivacijuDto = new ZahtevZaAktivacijuDto();
         zahtevZaAktivacijuDto.setMejl(zahtevZaAktivaciju.getMejl());
         zahtevZaAktivacijuDto.setPoruka("Zahtev odobren, lozinka: 123456789");
@@ -100,8 +111,8 @@ public class ZahtevZaAktivacijuRestController {
     }
 
     @PutMapping("/zahtev/odbij/{id}")
-    public ResponseEntity<ZahtevZaAktivacijuDto> odbijZahtev(@PathVariable(name ="id") Long id, HttpSession session){
-        Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
+    public ResponseEntity<ZahtevZaAktivacijuDto> odbijZahtev(@PathVariable(name ="id") Long id, String sessionId){
+        Korisnik korisnik = korisnikService.findBySessionId(sessionId);
 
         if ((korisnik == null) || (korisnik.getUloga() != Korisnik.Uloga.ADMINISTRATOR))
             return new ResponseEntity("Admin nije prijavljen", HttpStatus.FORBIDDEN);
@@ -116,6 +127,12 @@ public class ZahtevZaAktivacijuRestController {
 
         zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODBIJENO);
         zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(zahtevZaAktivaciju.getMejl());
+        mailMessage.setSubject("Zahtev odbijen");
+        mailMessage.setText("Zahtev odbijen");
+        javaMailSender.send(mailMessage);
 
         ZahtevZaAktivacijuDto zahtevZaAktivacijuDto = new ZahtevZaAktivacijuDto();
         zahtevZaAktivacijuDto.setMejl(zahtevZaAktivaciju.getMejl());

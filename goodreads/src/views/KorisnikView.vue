@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     fetchData() {
-      axios.get('http://localhost:8080/api/korisnik/' + this.$route.query.id)
+      axios.get('http://localhost:8080/api/korisnik/' + this.$route.query.id + '/' + localStorage.getItem('korisnik'))
         .then(response => {
           console.log(response.data);
           this.korisnik = response.data.korisnik;
