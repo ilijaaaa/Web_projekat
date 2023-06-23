@@ -161,7 +161,7 @@ ul {
 }
 
 .zahtev-button {
-  background-color: green;
+  background-color: blue;
   font-weight: bold;
   color: #fff;
   padding: 10px 20px;

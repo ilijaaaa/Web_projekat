@@ -114,13 +114,13 @@ public class KnjigaRestController {
     public ResponseEntity<Set<Knjiga>> pretragaKnjigeZanr(@PathVariable(name = "naziv") String naziv){
         Zanr zanr = zanrService.findOne(naziv);
         if (zanr == null) {
-            return new ResponseEntity("Zanr sa datim nazivom ne postoji", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Žanr sa datim nazivom ne postoji", HttpStatus.NOT_FOUND);
         }
 
         Set<Knjiga> knjige = knjigaService.findAllByZanr(naziv);
 
         if(knjige.isEmpty()){
-            return new ResponseEntity("Knjige tog zanra ne postoje", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Knjige tog žanra ne postoje", HttpStatus.NOT_FOUND);
         }
 
         Set<Knjiga> knjigas = new HashSet<>();
@@ -154,7 +154,7 @@ public class KnjigaRestController {
 
         for (Knjiga k : knjigaService.findAll())
             if (knjigaDto.getIsbn().equals(k.getIsbn()))
-                return new ResponseEntity("Ova knjiga vec postoji", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Ova knjiga već postoji", HttpStatus.BAD_REQUEST);
 
         Autor autor = autorService.findOne(knjigaDto.getAutor());
         if(autor == null)
@@ -163,7 +163,7 @@ public class KnjigaRestController {
         Zanr zanr = zanrService.findOne(knjigaDto.getZanr());
 
         if(zanr == null)
-            return new ResponseEntity("Ne postoji taj zanr u bazi", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Ne postoji taj žanr u bazi", HttpStatus.BAD_REQUEST);
 
         if(korisnik.getUloga() == Korisnik.Uloga.AUTOR)
             autor = (Autor)korisnik;
@@ -186,7 +186,7 @@ public class KnjigaRestController {
         Knjiga knjiga = knjigaService.findOne(id);
 
         if(!knjiga.getAutor().getId().equals(korisnik.getId()) && korisnik.getUloga().equals(Korisnik.Uloga.AUTOR))
-            return new ResponseEntity("Nije vasa knjiga za izmenu", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Nije vaša knjiga za izmenu", HttpStatus.FORBIDDEN);
 
         if(knjiga == null)
             return new ResponseEntity("Ova knjiga ne postoji", HttpStatus.NOT_FOUND);
@@ -209,7 +209,7 @@ public class KnjigaRestController {
         Zanr zanr = zanrService.findOne(knjigaDto.getZanr());
 
         if(zanr == null)
-            return new ResponseEntity("Ne postoji taj zanr u bazi", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Ne postoji taj žanr u bazi", HttpStatus.BAD_REQUEST);
 
         knjiga.setZanr(zanr);
 
@@ -241,7 +241,7 @@ public class KnjigaRestController {
 
         for(StavkaPolice sp : stavkaPoliceService.findAll(knjiga))
             if(sp.getRecenzija() != null)
-                return new ResponseEntity("Brisanje knjige nije moguce", HttpStatus.FORBIDDEN);
+                return new ResponseEntity("Brisanje knjige nije moguće", HttpStatus.FORBIDDEN);
 
         knjigaService.delete(id);
         return  ResponseEntity.ok(knjigaService.findAll());

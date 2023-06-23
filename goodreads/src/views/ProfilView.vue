@@ -18,17 +18,20 @@
       <div>
         <button @click="logout" class="logout-button">Odjava</button>
       </div>
-      <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
-        <button @click="this.$router.push('/dodajAutora')" class="dodaj-knjigu-button">Dodaj autora</button>
-      </div>
-      <div v-if="korisnik.uloga != 'CITALAC'">
-        <button @click="this.$router.push('/dodajKnjigu?uloga=' + korisnik.uloga)" class="dodaj-knjigu-button">Dodaj knjigu</button>
-      </div>
-      <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
-        <button @click="this.$router.push('/zahtevi')" class="dodaj-knjigu-button">Pregled zahteva</button>
-      </div>
-      <div v-if="korisnik.uloga == 'ADMINISTRATOR'">
-        <button @click="this.$router.push('/dodajZanr')" class="dodaj-knjigu-button">Dodaj žanr</button>
+      <div id="outer">
+        <div class="inner" v-if="korisnik.uloga == 'ADMINISTRATOR'">
+          <button @click="this.$router.push('/dodajAutora')" class="blue-button">Dodaj autora</button>
+        </div>
+        <div class="inner" v-if="korisnik.uloga != 'CITALAC'">
+          <button @click="this.$router.push('/dodajKnjigu?uloga=' + korisnik.uloga)" class="blue-button">Dodaj
+            knjigu</button>
+        </div>
+        <div class="inner" v-if="korisnik.uloga == 'ADMINISTRATOR'">
+          <button @click="this.$router.push('/zahtevi')" class="blue-button">Pregled zahteva</button>
+        </div>
+        <div class="inner" v-if="korisnik.uloga == 'ADMINISTRATOR'">
+          <button @click="this.$router.push('/dodajZanr')" class="blue-button">Dodaj žanr</button>
+        </div>
       </div>
       <div v-if="korisnik.opis">
         <h3>Opis: {{ korisnik.opis }}</h3>
@@ -53,8 +56,9 @@
               </div>
               <div
                 v-if="this.$route.fullPath.substring(this.$route.fullPath.length - 11, this.$route.fullPath.length - 2) == 'knjiga_id'">
-                <button class="dodaj-knjigu-button"
-                  @click="dodajKnjiguNaPolicu(polica.id, polica.naziv, this.$route.fullPath.charAt(this.$route.fullPath.length - 1))">Dodaj ovde</button>
+                <button class="green-button"
+                  @click="dodajKnjiguNaPolicu(polica.id, polica.naziv, this.$route.fullPath.charAt(this.$route.fullPath.length - 1))">Dodaj
+                  ovde</button>
               </div>
             </div>
             <ul class="book-list">
@@ -199,7 +203,7 @@ ul {
   background-color: #007bff;
   font-weight: bold;
   color: #fff;
-  padding: 4px 15px;
+  padding: 10px 15px;
   border: none;
   border-radius: 0 4px 4px 0;
   cursor: pointer;
@@ -277,9 +281,19 @@ ul {
   margin-bottom: 10px;
 }
 
-.dodaj-knjigu-button {
+#outer {
+  width: 100%;
+  text-align: center;
+}
+
+.inner {
+  display: inline-block;
+}
+
+.blue-button,
+.green-button {
   margin-top: 10px;
-  background-color: green;
+  margin-left: 1px;
   font-weight: bold;
   color: #fff;
   padding: 10px 20px;
@@ -288,7 +302,19 @@ ul {
   cursor: pointer;
 }
 
-.dodaj-knjigu-button:hover {
+.blue-button{
+  background-color: #007bff;
+}
+
+.blue-button:hover {
+  background-color: blue;
+}
+
+.green-button{
+  background-color: green;
+}
+
+.green-button:hover {
   background-color: darkgreen;
 }
 

@@ -33,11 +33,11 @@ public class ZahtevZaAktivacijuRestController {
         Korisnik korisnik = (Korisnik) session.getAttribute("korisnik");
 
         if (korisnik != null)
-            return new ResponseEntity("Vec imate nalog", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Već imate nalog", HttpStatus.FORBIDDEN);
 
         for (Korisnik k : korisnikService.findAll())
             if(zahtevDto.getMejl().equals(k.getMejl()))
-                return new ResponseEntity("Mejl se vec koristi za nalog", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Mejl se već koristi za nalog", HttpStatus.BAD_REQUEST);
 
         Autor autor = autorService.findOne(id);
 
@@ -46,7 +46,7 @@ public class ZahtevZaAktivacijuRestController {
 
         for(ZahtevZaAktivaciju z : zahtevZaAktivacijuService.findAll(autor))
             if(z.getMejl().equals(zahtevDto.getMejl()))
-                return new ResponseEntity("Zahtev vec postoji sa tim mejlom", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Zahtev već postoji sa tim mejlom", HttpStatus.BAD_REQUEST);
 
         ZahtevZaAktivaciju zahtev = new ZahtevZaAktivaciju(zahtevDto.getMejl(), zahtevDto.getTelefon(), zahtevDto.getPoruka(), autor);
         this.zahtevZaAktivacijuService.save(zahtev);
@@ -82,7 +82,7 @@ public class ZahtevZaAktivacijuRestController {
             return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
 
         if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
-            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Zahtev je razrešen", HttpStatus.FORBIDDEN);
 
         zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODOBRENO);
         zahtevZaAktivacijuService.save(zahtevZaAktivaciju);
@@ -128,7 +128,7 @@ public class ZahtevZaAktivacijuRestController {
             return new ResponseEntity("Ne postoji zahtev", HttpStatus.NOT_FOUND);
 
         if(zahtevZaAktivaciju.getStatus() != ZahtevZaAktivaciju.RequestStatus.CEKANJE)
-            return new ResponseEntity("Zahtev je razresen", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Zahtev je razrešen", HttpStatus.FORBIDDEN);
 
         zahtevZaAktivaciju.setStatus(ZahtevZaAktivaciju.RequestStatus.ODBIJENO);
         zahtevZaAktivacijuService.save(zahtevZaAktivaciju);

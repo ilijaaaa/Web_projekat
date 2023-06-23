@@ -34,7 +34,7 @@ public class ZanrRestController {
 
         for(Zanr z : zanrService.findAll())
             if(stringDto.getValue().equals(z.getNaziv()))
-                return new ResponseEntity("Zanr vec postoji", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Žanr vec postoji", HttpStatus.BAD_REQUEST);
 
         Zanr zanr = new Zanr(stringDto.getValue());
         this.zanrService.save(zanr);

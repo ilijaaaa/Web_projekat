@@ -46,10 +46,10 @@ public class RecenzijaRestController {
                         stavka = sp;
 
         if(stavka == null)
-            return new ResponseEntity("Knjiga ne postoji na trazenoj polici", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Knjiga ne postoji na traženoj polici", HttpStatus.NOT_FOUND);
 
         if(stavka.getRecenzija() != null)
-            return new ResponseEntity("Knjiga vec ima recenziju", HttpStatus.FORBIDDEN);
+            return new ResponseEntity("Knjiga već ima recenziju", HttpStatus.FORBIDDEN);
 
         float suma = 0;
         int br = 0;
@@ -65,7 +65,7 @@ public class RecenzijaRestController {
         Recenzija recenzija = new Recenzija(recenzijaDto.getOcena(), recenzijaDto.getTekst(), LocalDate.parse(recenzijaDto.getDatum(), DateTimeFormatter.ISO_DATE), korisnik, stavka);
         recenzijaService.save(recenzija);
 
-        return ResponseEntity.ok("Recenzija uspesno dodata");
+        return ResponseEntity.ok("Recenzija uspešno dodata");
     }
 
     @PutMapping("/recenzija/{recenzija_id}/knjiga/{knjiga_id}")
@@ -102,7 +102,7 @@ public class RecenzijaRestController {
 
         recenzijaService.save(recenzija);
 
-        return ResponseEntity.ok("Recenzija uspesno izmenjena");
+        return ResponseEntity.ok("Recenzija uspešno izmenjena");
     }
 
     @GetMapping("/recenzija/{id}")

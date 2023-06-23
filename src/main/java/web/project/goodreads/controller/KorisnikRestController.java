@@ -147,9 +147,9 @@ public class KorisnikRestController {
 
         for (Korisnik k : korisnikService.findAll()){
             if(signInDto.getKorisnickoIme().equals(k.getKorisnickoIme()))
-                return new ResponseEntity("Korisnicko ime se vec koristi", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Korisničko ime se već koristi", HttpStatus.BAD_REQUEST);
             if(signInDto.getMejl().equals(k.getMejl()))
-                return new ResponseEntity("Mejl se vec koristi", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Mejl se već koristi", HttpStatus.BAD_REQUEST);
         }
 
         Korisnik korisnik = new Korisnik(signInDto.getIme(), signInDto.getPrezime(), signInDto.getKorisnickoIme(), signInDto.getMejl(), signInDto.getLozinka());
@@ -236,7 +236,7 @@ public class KorisnikRestController {
         for (Korisnik k : korisnikService.findAll())
             if(k.getMejl() != null)
                 if(k.getMejl().equals(azuriranjeKorisnikaDto.getMejl()))
-                    return new ResponseEntity("Ovaj mejl se vec koristi", HttpStatus.BAD_REQUEST);
+                    return new ResponseEntity("Ovaj mejl se već koristi", HttpStatus.BAD_REQUEST);
 
         if(azuriranjeKorisnikaDto.getMejl() != null)
             if(azuriranjeKorisnikaDto.getStaraLozinka() == null)

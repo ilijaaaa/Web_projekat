@@ -20,20 +20,26 @@
                 <h2 class="author-name">{{ autor.ime }} {{ autor.prezime }}</h2>
                 <h3 class="author-description">Opis: {{ autor.opis }}</h3>
                 <div v-if="autor.aktivan == false && uloga == 'ADMINISTRATOR'">
-                    <button class="dodaj-knjigu-button" @click="this.$router.push('/azuriranjeAutora?id=' + autor.id)">Ažuriraj autora</button>
+                    <button class="izmeni-knjigu-button"
+                        @click="this.$router.push('/azuriranjeAutora?id=' + autor.id)">Ažuriraj autora</button>
                 </div>
             </div>
         </div>
-        <div v-if="sessionId">
-            <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj na policu</button>
+        <div id="outer">
+            <div class="inner" v-if="sessionId">
+                <button class="dodaj-knjigu-button" @click="this.$router.push('/profil?knjiga_id=' + knjiga.id)">Dodaj na
+                    policu</button>
+            </div>
+            <div class="inner" v-if="uloga == 'ADMINISTRATOR' || id == autor.id">
+                <button class="izmeni-knjigu-button"
+                    @click="this.$router.push({ path: 'izmenaKnjige', query: { ulog: uloga, knjiga_id: knjiga.id } })">Izmeni
+                    knjigu</button>
+            </div>
+            <div class="inner" v-if="uloga == 'ADMINISTRATOR'">
+                <button class="izbrisi-knjigu-button" @click="obrisiKnjigu(knjiga.id)">Izbriši knjigu</button>
+            </div>
         </div>
-        <div v-if="uloga == 'ADMINISTRATOR' || id == autor.id">
-            <button class="dodaj-knjigu-button" @click="this.$router.push({path: 'izmenaKnjige', query: {ulog: uloga, knjiga_id: knjiga.id}})">Izmeni knjigu</button>
-        </div>
-        <div v-if="uloga == 'ADMINISTRATOR'">
-            <button class="dodaj-knjigu-button" @click="obrisiKnjigu(knjiga.id)">Izbriši knjigu</button>
-            <div v-if="errorKnjiga" class="error">{{ errorKnjiga }}</div>
-        </div>
+        <div v-if="errorKnjiga" class="error">{{ errorKnjiga }}</div>
         <h2 class="reviews-title">Recenzije:</h2>
         <ul class="reviews-list">
             <li v-for="recenzija in recenzije" :key="recenzija.id" class="review-item">
@@ -45,7 +51,9 @@
                 <p class="review-text">{{ recenzija.tekst }}</p>
                 <p class="review-date">{{ recenzija.datum }}</p>
                 <div v-if="recenzija.korisnik.sessionId == this.sessionId && this.sessionId != null">
-                    <button class="dodaj-knjigu-button" @click="this.$router.push({path: 'izmenaRecenzije', query: {id: recenzija.id, knjiga_id: knjiga.id}})" style="margin-left: 10px; margin-bottom: 25px;">Izmeni</button>
+                    <button class="dodaj-knjigu-button"
+                        @click="this.$router.push({ path: 'izmenaRecenzije', query: { id: recenzija.id, knjiga_id: knjiga.id } })"
+                        style="margin-left: 10px; margin-bottom: 5px;">Izmeni</button>
                 </div>
             </li>
         </ul>
@@ -97,7 +105,7 @@ export default {
                     this.loading = false;
                 });
         },
-        obrisiKnjigu(id){
+        obrisiKnjigu(id) {
             axios.delete('http://localhost:8080/api/knjiga/' + id + '/' + this.sessionId)
                 .then(response => {
                     console.log(response.data);
@@ -222,9 +230,20 @@ ul {
     margin-bottom: 10px;
 }
 
-.dodaj-knjigu-button {
-    margin-top: 30px;
-    background-color: green;
+#outer {
+    width: 100%;
+    text-align: center;
+}
+
+.inner {
+    display: inline-block;
+}
+
+.dodaj-knjigu-button,
+.izmeni-knjigu-button,
+.izbrisi-knjigu-button {
+    display: inline;
+    margin-top: 10px;
     font-weight: bold;
     color: #fff;
     padding: 10px 20px;
@@ -233,8 +252,30 @@ ul {
     cursor: pointer;
 }
 
+.dodaj-knjigu-button {
+    background-color: green;
+}
+
 .dodaj-knjigu-button:hover {
     background-color: darkgreen;
+}
+
+.izmeni-knjigu-button {
+    margin-left: 1px;
+    background-color: blue;
+}
+
+.izmeni-knjigu-button:hover {
+    background-color: darkblue;
+}
+
+.izbrisi-knjigu-button {
+    margin-left: 1px;
+    background-color: red;
+}
+
+.izbrisi-knjigu-button:hover {
+    background-color: darkred;
 }
 
 .reviews-title {

@@ -42,7 +42,7 @@ public class PolicaRestController {
 
         for(Polica p : police)
             if(stringDto.getValue().equals(p.getNaziv()))
-                return new ResponseEntity("Polica vec postoji", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity("Polica već postoji", HttpStatus.BAD_REQUEST);
 
         Polica polica = new Polica(stringDto.getValue(), false, korisnik);
         policaService.save(polica);
@@ -69,7 +69,7 @@ public class PolicaRestController {
 
         policaService.deleteOne(id);
 
-        return ResponseEntity.ok("Uspesno izbrisana polica");
+        return ResponseEntity.ok("Uspešno izbrisana polica");
     }
 
     private Set<Polica> police(Korisnik korisnik){
@@ -106,7 +106,7 @@ public class PolicaRestController {
                 if (polica.isPrimarno())
                     for (StavkaPolice sp : stavkaPoliceService.findAll(polica))
                         if (sp.getKnjiga().getId().equals(knjiga_id))
-                            return new ResponseEntity("Knjiga vec postoji na primarnoj polici", HttpStatus.FORBIDDEN);
+                            return new ResponseEntity("Knjiga već postoji na primarnoj polici", HttpStatus.FORBIDDEN);
         }
         else {
             for (Polica polica : policaService.findAll(korisnik))
@@ -121,12 +121,12 @@ public class PolicaRestController {
 
         for (StavkaPolice sp : stavkaPoliceService.findAll(p))
             if (sp.getKnjiga().getId().equals(knjiga_id))
-                return new ResponseEntity("Knjiga vec postoji na polici", HttpStatus.FORBIDDEN);
+                return new ResponseEntity("Knjiga već postoji na polici", HttpStatus.FORBIDDEN);
 
         StavkaPolice stavka = new StavkaPolice(p, k);
         stavkaPoliceService.save(stavka);
 
-        return ResponseEntity.ok("Uspesno dodata knjiga");
+        return ResponseEntity.ok("Uspešno dodata knjiga");
     }
 
     @DeleteMapping("/polica/{polica_id}/knjiga/{knjiga_id}/{sessionId}")
@@ -151,7 +151,7 @@ public class PolicaRestController {
                 stavka = sp;
 
         if(stavka == null)
-            return new ResponseEntity("Knjiga ne postoji na trazenoj polici", HttpStatus.NOT_FOUND);
+            return new ResponseEntity("Knjiga ne postoji na traženoj polici", HttpStatus.NOT_FOUND);
 
         if(p.getNaziv().equals("Read"))
             if(stavka.getRecenzija() != null)
@@ -165,6 +165,6 @@ public class PolicaRestController {
                     if (sp.getKnjiga().getId().equals(knjiga_id))
                         stavkaPoliceService.delete(sp.getId());
 
-        return ResponseEntity.ok("Uspesno izbrisana knjiga");
+        return ResponseEntity.ok("Uspešno izbrisana knjiga");
     }
 }

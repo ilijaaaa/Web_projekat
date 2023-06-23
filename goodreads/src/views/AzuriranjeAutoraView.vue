@@ -1,5 +1,5 @@
 <template>
-    <h2 class="subheading">Izmeni autora</h2>
+    <h2 class="subheading">Ažuriraj autora</h2>
     <form @submit.prevent="azurirajAutora" class="form">
         <div class="form-group">
             <input v-model="autorDto.ime" type="text"/>
